@@ -1,0 +1,5 @@
+# editor metadata
+.idea
+
+# build output
+steampipe-plugin-make
