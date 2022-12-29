@@ -6,3 +6,8 @@ _What's new?_
 
   - [make_organization](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_organization.md)
   - [make_team](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_team.md)
+
+
+- Basic functionality
+
+  - Client-side rate limiting

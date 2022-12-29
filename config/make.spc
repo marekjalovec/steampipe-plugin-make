@@ -12,4 +12,15 @@ connection "make" {
   # for example, https://development.make.cloud, or the link to Make
   # with or without the zone, depending on a specific endpoint, for example, https://eu1.make.com.
   environment_url = "https://eu1.make.com"
+
+  # Rate limiting
+  # Make API limits the number of requests you can send to the Make API.
+  # Make sets the rate limits based on your organization plan:
+  # - Core: 60 per minute
+  # - Pro: 120 per minute
+  # - Teams: 240 per minute
+  # - Enterprise: 1 000 per minute
+  # We recommend to set a value below (or at most at) 80% of your total limit.
+  # The default value is 50 if you don't override it here.
+  # rate_limit = 50
 }

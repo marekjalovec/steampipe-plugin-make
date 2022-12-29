@@ -11,19 +11,22 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
-const (
-	defaultPageSize = 10000
+var (
+	defaultPageSize  int64 = 10000
+	defaultRateLimit int   = 50
 )
 
 // Client for the Make API
 type Client struct {
-	client   *http.Client
-	baseURL  string
-	apiKey   string
-	logger   hclog.Logger
-	pageSize int64
+	client      *http.Client
+	rateLimiter <-chan time.Time
+	baseURL     string
+	apiKey      string
+	logger      hclog.Logger
+	pageSize    int64
 }
 
 var clientInstance *Client
@@ -37,18 +40,37 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 	config := getConfig(connection)
 	envUrl := strings.TrimSuffix(*config.EnvironmentURL, "/")
 
+	if config.RateLimit == nil {
+		config.RateLimit = &defaultRateLimit
+	}
+
+	// rate limiter with 10% burstable rate
+	var rateLimiter = make(chan time.Time, *config.RateLimit/10)
+	go func() {
+		for t := range time.Tick(time.Minute / time.Duration(*config.RateLimit)) {
+			rateLimiter <- t
+		}
+	}()
+
 	clientInstance = &Client{
-		client:   http.DefaultClient,
-		apiKey:   *config.APIKey,
-		baseURL:  envUrl,
-		logger:   utils.GetLogger(),
-		pageSize: defaultPageSize,
+		client:      http.DefaultClient,
+		rateLimiter: rateLimiter,
+		apiKey:      *config.APIKey,
+		baseURL:     envUrl,
+		logger:      utils.GetLogger(),
+		pageSize:    defaultPageSize,
 	}
 
 	return clientInstance, nil
 }
 
+func (at *Client) rateLimit() {
+	<-at.rateLimiter
+}
+
 func (at *Client) Get(config *RequestConfig, target interface{}) error {
+	at.rateLimit()
+
 	// prepare the request URL
 	apiUrl := at.getApiUrl(config.Endpoint, config.RecordId)
 	req, err := at.createAuthorizedRequest(apiUrl)
@@ -133,7 +155,6 @@ func (at *Client) do(req *http.Request, response interface{}) error {
 	if err != nil {
 		return fmt.Errorf("JSON decode failed on %s: %s error: %w", reqUrl, hclog.Quote(b), err)
 	}
-
 
 	at.logger.Info(fmt.Sprintf("Response: %s", string(b)))
 

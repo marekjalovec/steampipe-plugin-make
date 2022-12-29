@@ -8,11 +8,13 @@ import (
 type Config struct {
 	APIKey         *string `cty:"api_key"`
 	EnvironmentURL *string `cty:"environment_url"`
+	RateLimit      *int    `cty:"rate_limit"`
 }
 
 var ConfigSchema = map[string]*schema.Attribute{
 	"api_key":         {Type: schema.TypeString},
 	"environment_url": {Type: schema.TypeString},
+	"rate_limit":      {Type: schema.TypeInt},
 }
 
 func ConfigInstance() interface{} {
