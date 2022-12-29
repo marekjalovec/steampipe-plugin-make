@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"net/url"
 )
 
@@ -16,4 +17,19 @@ func ColumnsToParams(params *url.Values, columns []string) {
 			params.Add("cols", c)
 		}
 	}
+}
+
+func LogQueryContext(namespace string, d *plugin.QueryData, h *plugin.HydrateData) {
+	logger.Info(namespace, "Table", d.Table.Name)
+	logger.Info(namespace, "QueryContext", ToJSON(d.QueryContext))
+	logger.Info(namespace, "KeyColumnQuals", ToJSON(d.KeyColumnQuals))
+	logger.Info(namespace, "HydrateData", ToJSON(h))
+}
+
+func StandardColumnDescription(key string) string {
+	switch key {
+	case "title":
+		return "The display name for this resource."
+	}
+	return ""
 }

@@ -20,13 +20,14 @@ const pluginName = "steampipe-plugin-make"
 func Plugin(ctx context.Context) *plugin.Plugin {
 	p := &plugin.Plugin{
 		Name:             pluginName,
-		DefaultTransform: transform.FromJSONTag().NullIfZero(),
+		DefaultTransform: transform.FromCamel().NullIfZero(),
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
 			NewInstance: client.ConfigInstance,
 			Schema:      client.ConfigSchema,
 		},
 		TableMap: map[string]*plugin.Table{
 			"make_organization": tableOrganization(ctx),
+			"make_team":         tableTeam(ctx),
 		},
 	}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
 type Organization struct {
@@ -54,35 +55,40 @@ func tableOrganization(_ context.Context) *plugin.Table {
 			Hydrate:    getOrganization,
 		},
 		Columns: []*plugin.Column{
+			// Key Columns
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The organization ID."},
+
+			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the organization."},
-			{Name: "countryId", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the organization."},
-			{Name: "timezoneId", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the organization. "},
-			{Name: "license", Type: proto.ColumnType_JSON, Description: ""},
-			{Name: "zone", Type: proto.ColumnType_STRING, Description: ""},
-			{Name: "serviceName", Type: proto.ColumnType_STRING, Description: ""},
-			{Name: "isPaused", Type: proto.ColumnType_BOOL, Description: ""},
-			{Name: "externalId", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},
+			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the organization."},
+			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the organization."},
+			{Name: "license", Type: proto.ColumnType_JSON, Description: "Licence information and limits."},
+			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the origanization exists."},
+			{Name: "service_name", Type: proto.ColumnType_STRING, Description: ""},
+			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: ""},
+			{Name: "external_id", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},
+
+			// Standard Columns
+			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 		},
 	}
 }
 
 func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	logger := utils.GetLogger()
+	utils.LogQueryContext("getOrganization", d, h)
+
+	var logger = utils.GetLogger()
 
 	c, err := client.GetClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	logger.Info("getOrganization", "KeyColumnQuals", d.KeyColumnQuals)
-	logger.Info("getOrganization", "Columns", d.QueryContext.Columns)
-
-	id := d.KeyColumnQuals["id"].GetInt64Value()
+	var id = d.KeyColumnQuals["id"].GetInt64Value()
+	var config = client.NewRequestConfig(EndpointOrganization, id)
+	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
 
 	var result = &OrganizationResponse{}
-	config := client.NewRequestConfig("organizations", id)
-	utils.ColumnsToParams(&config.Params, d.QueryContext.Columns)
 	err = c.Get(&config, &result)
 	if err != nil {
 		logger.Info("getOrganization", err.Error())
@@ -93,7 +99,9 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 }
 
 func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	logger := utils.GetLogger()
+	utils.LogQueryContext("listOrganizations", d, h)
+
+	var logger = utils.GetLogger()
 
 	// create new Make client
 	c, err := client.GetClient(d.Connection)
@@ -101,16 +109,13 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	logger.Info("getOrganization", "KeyColumnQuals", d.KeyColumnQuals)
-	logger.Info("getOrganization", "Columns", d.QueryContext.Columns)
-
-	config := client.NewRequestConfig("organizations", 0)
-	utils.ColumnsToParams(&config.Params, d.QueryContext.Columns)
+	var config = client.NewRequestConfig(EndpointOrganization, 0)
+	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = *d.QueryContext.Limit
 	}
 
-	pagesLeft := true
+	var pagesLeft = true
 	for pagesLeft {
 		var result = &OrganizationListResponse{}
 		err = c.Get(&config, result)
@@ -125,7 +130,7 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		}
 
 		// pagination
-		resultCount := int64(len(result.Organizations))
+		var resultCount = int64(len(result.Organizations))
 		if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 			pagesLeft = false
 		} else {
