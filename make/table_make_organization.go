@@ -84,7 +84,7 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var id = d.KeyColumnQuals["id"].GetInt64Value()
+	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
 	var config = client.NewRequestConfig(EndpointOrganization, id)
 	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
 
@@ -112,7 +112,7 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	var config = client.NewRequestConfig(EndpointOrganization, 0)
 	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
 	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = *d.QueryContext.Limit
+		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
 
 	var pagesLeft = true
@@ -130,7 +130,7 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		}
 
 		// pagination
-		var resultCount = int64(len(result.Organizations))
+		var resultCount = len(result.Organizations)
 		if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 			pagesLeft = false
 		} else {

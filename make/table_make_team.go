@@ -61,7 +61,7 @@ func getTeam(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (int
 		return nil, err
 	}
 
-	var id = d.KeyColumnQuals["id"].GetInt64Value()
+	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
 	config := client.NewRequestConfig(EndpointTeam, id)
 	utils.ColumnsToParams(&config.Params, ColumnsTeam())
 
@@ -94,7 +94,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	utils.ColumnsToParams(&config.Params, ColumnsTeam())
 	config.Params.Set("organizationId", strconv.Itoa(h.Item.(Organization).Id))
 	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = *d.QueryContext.Limit
+		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
 
 	var pagesLeft = true
@@ -112,7 +112,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		}
 
 		// pagination
-		var resultCount = int64(len(result.Teams))
+		var resultCount = len(result.Teams)
 		if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 			pagesLeft = false
 		} else {

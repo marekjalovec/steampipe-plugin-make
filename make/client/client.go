@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	defaultPageSize  int64 = 10000
-	defaultRateLimit int   = 50
+	defaultPageSize  = 10000
+	defaultRateLimit = 50
 )
 
 // Client for the Make API
@@ -26,7 +26,7 @@ type Client struct {
 	baseURL     string
 	apiKey      string
 	logger      hclog.Logger
-	pageSize    int64
+	pageSize    int
 }
 
 var clientInstance *Client
@@ -88,7 +88,7 @@ func (at *Client) Get(config *RequestConfig, target interface{}) error {
 	return nil
 }
 
-func (at *Client) getApiUrl(endpoint string, recordId int64) string {
+func (at *Client) getApiUrl(endpoint string, recordId int) string {
 	apiUrl := fmt.Sprintf("%s/api/v2/%s", at.baseURL, endpoint)
 	if recordId != 0 {
 		apiUrl += fmt.Sprintf("/%d", recordId)
@@ -120,8 +120,8 @@ func (at *Client) setQueryParams(req *http.Request, config *RequestConfig) {
 	}
 
 	// set pagination params
-	config.Params.Set("pg[offset]", strconv.FormatInt(config.Pagination.Offset, 10))
-	config.Params.Set("pg[limit]", strconv.FormatInt(config.Pagination.Limit, 10))
+	config.Params.Set("pg[offset]", strconv.Itoa(config.Pagination.Offset))
+	config.Params.Set("pg[limit]", strconv.Itoa(config.Pagination.Limit))
 
 	// encode params
 	req.URL.RawQuery = config.Params.Encode()

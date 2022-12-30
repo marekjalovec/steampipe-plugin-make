@@ -2,7 +2,7 @@ package client
 
 import "net/url"
 
-func NewRequestConfig(endpoint string, recordId int64) RequestConfig {
+func NewRequestConfig(endpoint string, recordId int) RequestConfig {
 	return RequestConfig{
 		Endpoint:   endpoint,
 		RecordId:   recordId,
@@ -13,12 +13,12 @@ func NewRequestConfig(endpoint string, recordId int64) RequestConfig {
 
 type RequestConfig struct {
 	Endpoint   string
-	RecordId   int64
+	RecordId   int
 	Params     url.Values
 	Pagination RequestPagination
 }
 
 type RequestPagination struct {
-	Limit  int64
-	Offset int64
+	Limit  int
+	Offset int
 }
