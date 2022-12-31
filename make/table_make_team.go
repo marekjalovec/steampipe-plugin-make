@@ -62,13 +62,13 @@ func getTeam(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (int
 	}
 
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
-	config := client.NewRequestConfig(EndpointTeam, id)
-	utils.ColumnsToParams(&config.Params, ColumnsTeam())
+	config := client.NewRequestConfig("teams", id)
+	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 
 	var result = &TeamResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Info("getTeam", err.Error())
+		logger.Error("make_team.getTeam", "connection_error", err)
 		return nil, err
 	}
 
@@ -90,8 +90,8 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var config = client.NewRequestConfig(EndpointTeam, 0)
-	utils.ColumnsToParams(&config.Params, ColumnsTeam())
+	var config = client.NewRequestConfig("teams", 0)
+	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 	config.Params.Set("organizationId", strconv.Itoa(h.Item.(Organization).Id))
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)

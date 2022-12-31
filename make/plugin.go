@@ -28,6 +28,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		TableMap: map[string]*plugin.Table{
 			"make_organization": tableOrganization(ctx),
 			"make_team":         tableTeam(ctx),
+			"make_connection":   tableConnection(ctx),
 		},
 	}
 

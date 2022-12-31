@@ -19,6 +19,12 @@ type Organization struct {
 	ServiceName string              `json:"serviceName"`
 	IsPaused    bool                `json:"isPaused"`
 	ExternalId  string              `json:"externalId"`
+	Teams       []OrganizationTeam  `json:"teams"` // used to load make_connection
+}
+
+type OrganizationTeam struct {
+	Id   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type OrganizationLicence struct {
@@ -63,7 +69,7 @@ func tableOrganization(_ context.Context) *plugin.Table {
 			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the organization."},
 			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the organization."},
 			{Name: "license", Type: proto.ColumnType_JSON, Description: "Licence information and limits."},
-			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the origanization exists."},
+			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the organization exists."},
 			{Name: "service_name", Type: proto.ColumnType_STRING, Description: ""},
 			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: ""},
 			{Name: "external_id", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},
@@ -85,8 +91,8 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	}
 
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
-	var config = client.NewRequestConfig(EndpointOrganization, id)
-	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
+	var config = client.NewRequestConfig("organizations", id)
+	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 
 	var result = &OrganizationResponse{}
 	err = c.Get(&config, &result)
@@ -109,8 +115,8 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	var config = client.NewRequestConfig(EndpointOrganization, 0)
-	utils.ColumnsToParams(&config.Params, ColumnsOrganization())
+	var config = client.NewRequestConfig("organizations", 0)
+	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
