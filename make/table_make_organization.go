@@ -66,11 +66,11 @@ func tableOrganization(_ context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The organization ID."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the organization."},
-			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the organization."},
-			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the organization."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Organization."},
+			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the Organization."},
+			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the Organization."},
 			{Name: "license", Type: proto.ColumnType_JSON, Description: "Licence information and limits."},
-			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the organization exists."},
+			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the Organization exists."},
 			{Name: "service_name", Type: proto.ColumnType_STRING, Description: ""},
 			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: ""},
 			{Name: "external_id", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},

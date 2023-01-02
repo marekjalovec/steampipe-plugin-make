@@ -40,11 +40,11 @@ func tableTeam(_ context.Context) *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			// Key Columns
-			{Name: "id", Type: proto.ColumnType_INT, Description: "The team ID."},
-			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "The ID of the organization."},
+			{Name: "id", Type: proto.ColumnType_INT, Description: "The Team ID."},
+			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "The ID of the Organization."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the team."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Team."},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")}},

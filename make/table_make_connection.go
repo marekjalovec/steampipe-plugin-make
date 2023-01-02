@@ -62,22 +62,22 @@ func tableConnection(_ context.Context) *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			// Key Columns
-			{Name: "id", Type: proto.ColumnType_INT, Description: "The connection ID."},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the team that owns this connection."},
+			{Name: "id", Type: proto.ColumnType_INT, Description: "The Connection ID."},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the Team that owns this Connection."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "The user friendly name of the connection."},
-			{Name: "account_name", Type: proto.ColumnType_STRING, Description: "The system name of the application tied to this connection."},
-			{Name: "account_label", Type: proto.ColumnType_STRING, Description: "The user friendly name of the application tied to this connection."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The user friendly name of the Connection."},
+			{Name: "account_name", Type: proto.ColumnType_STRING, Description: "The system name of the application tied to this Connection."},
+			{Name: "account_label", Type: proto.ColumnType_STRING, Description: "The user friendly name of the application tied to this Connection."},
 			{Name: "account_type", Type: proto.ColumnType_STRING, Description: "Authentication type."},
-			{Name: "package_name", Type: proto.ColumnType_STRING, Description: "No idea at this point, TODO."},
-			{Name: "expire", Type: proto.ColumnType_TIMESTAMP, Description: "When does the connection expire?"},
-			{Name: "metadata", Type: proto.ColumnType_JSON, Description: "Metadata attached to the connection."},
-			{Name: "upgradeable", Type: proto.ColumnType_BOOL, Description: "Can the connection be upgraded?"},
-			{Name: "scoped", Type: proto.ColumnType_BOOL, Description: "Is the connection scoped?"},
-			{Name: "scopes", Type: proto.ColumnType_JSON, Description: "Security scopes of the connection.", Hydrate: getConnection},
-			{Name: "editable", Type: proto.ColumnType_BOOL, Description: "Can the connection be edited?"},
-			{Name: "uid", Type: proto.ColumnType_STRING, Description: "UID of this connection."},
+			{Name: "package_name", Type: proto.ColumnType_STRING, Description: "No idea at this point, sorry."},
+			{Name: "expire", Type: proto.ColumnType_TIMESTAMP, Description: "When does the Connection expire?"},
+			{Name: "metadata", Type: proto.ColumnType_JSON, Description: "Metadata attached to the Connection."},
+			{Name: "upgradeable", Type: proto.ColumnType_BOOL, Description: "Can the Connection be upgraded?"},
+			{Name: "scoped", Type: proto.ColumnType_BOOL, Description: "Is the Connection scoped?"},
+			{Name: "scopes", Type: proto.ColumnType_JSON, Description: "Security scopes of the Connection.", Hydrate: getConnection},
+			{Name: "editable", Type: proto.ColumnType_BOOL, Description: "Can the Connection be edited?"},
+			{Name: "uid", Type: proto.ColumnType_STRING, Description: "UID of this Connection."},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},

@@ -52,14 +52,14 @@ func tableUser(_ context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The user ID."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Full name of the user."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "Full name of the User."},
 			{Name: "email", Type: proto.ColumnType_STRING, Description: "User's email."},
 			{Name: "language", Type: proto.ColumnType_STRING, Description: "Environment language."},
 			{Name: "locale_id", Type: proto.ColumnType_INT, Description: "Environment locale - date and hour formats, decimal separators etc."},
-			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the user."},
-			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the user."},
-			{Name: "features", Type: proto.ColumnType_JSON, Description: "Features enabled for the user."},
-			{Name: "avatar", Type: proto.ColumnType_STRING, Description: "Gravatar URL for the user."},
+			{Name: "country_id", Type: proto.ColumnType_INT, Description: "The ID of the country associated with the User."},
+			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the User."},
+			{Name: "features", Type: proto.ColumnType_JSON, Description: "Features enabled for the User."},
+			{Name: "avatar", Type: proto.ColumnType_STRING, Description: "Gravatar URL for the User."},
 			{Name: "last_login", Type: proto.ColumnType_TIMESTAMP, Description: "Date and time of the last login."},
 
 			// Standard Columns
