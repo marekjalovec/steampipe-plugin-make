@@ -2,6 +2,7 @@ package make
 
 import (
 	"context"
+	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/make/client"
 	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
@@ -85,15 +86,18 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 
 	var logger = utils.GetLogger()
 
+	// create new Make client
 	c, err := client.GetClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
+	// prepare params
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
-	var config = client.NewRequestConfig("organizations", id)
+	var config = client.NewRequestConfig(fmt.Sprintf(`organizations/%d`, id))
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 
+	// fetch data
 	var result = &OrganizationResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
@@ -115,12 +119,14 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	var config = client.NewRequestConfig("organizations", 0)
+	// prepare params
+	var config = client.NewRequestConfig("organizations")
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
 
+	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
 		var result = &OrganizationListResponse{}

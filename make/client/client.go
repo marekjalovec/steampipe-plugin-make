@@ -37,8 +37,8 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 		return clientInstance, nil
 	}
 
-	config := getConfig(connection)
-	envUrl := strings.TrimSuffix(*config.EnvironmentURL, "/")
+	var config = getConfig(connection)
+	var envUrl = strings.TrimSuffix(*config.EnvironmentURL, "/")
 
 	if config.RateLimit == nil {
 		config.RateLimit = &defaultRateLimit
@@ -72,8 +72,7 @@ func (at *Client) Get(config *RequestConfig, target interface{}) error {
 	at.rateLimit()
 
 	// prepare the request URL
-	apiUrl := at.getApiUrl(config.Endpoint, config.RecordId)
-	req, err := at.createAuthorizedRequest(apiUrl)
+	req, err := at.createAuthorizedRequest(fmt.Sprintf("%s/api/v2/%s", at.baseURL, config.Endpoint))
 	if err != nil {
 		return err
 	}
@@ -86,15 +85,6 @@ func (at *Client) Get(config *RequestConfig, target interface{}) error {
 	}
 
 	return nil
-}
-
-func (at *Client) getApiUrl(endpoint string, recordId int) string {
-	apiUrl := fmt.Sprintf("%s/api/v2/%s", at.baseURL, endpoint)
-	if recordId != 0 {
-		apiUrl += fmt.Sprintf("/%d", recordId)
-	}
-
-	return apiUrl
 }
 
 func (at *Client) createAuthorizedRequest(apiUrl string) (*http.Request, error) {
@@ -129,7 +119,7 @@ func (at *Client) setQueryParams(req *http.Request, config *RequestConfig) {
 }
 
 func (at *Client) do(req *http.Request, response interface{}) error {
-	reqUrl := req.URL.RequestURI()
+	var reqUrl = req.URL.RequestURI()
 
 	// make the call
 	resp, err := at.client.Do(req)

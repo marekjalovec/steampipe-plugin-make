@@ -2,10 +2,9 @@ package client
 
 import "net/url"
 
-func NewRequestConfig(endpoint string, recordId int) RequestConfig {
+func NewRequestConfig(endpoint string) RequestConfig {
 	return RequestConfig{
 		Endpoint:   endpoint,
-		RecordId:   recordId,
 		Params:     url.Values{},
 		Pagination: RequestPagination{},
 	}
@@ -13,7 +12,6 @@ func NewRequestConfig(endpoint string, recordId int) RequestConfig {
 
 type RequestConfig struct {
 	Endpoint   string
-	RecordId   int
 	Params     url.Values
 	Pagination RequestPagination
 }

@@ -63,6 +63,7 @@ func tableConnection(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Key Columns
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The connection ID."},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the team that owns this connection."},
 
 			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The user friendly name of the connection."},
@@ -72,7 +73,6 @@ func tableConnection(_ context.Context) *plugin.Table {
 			{Name: "package_name", Type: proto.ColumnType_STRING, Description: "No idea at this point, TODO."},
 			{Name: "expire", Type: proto.ColumnType_TIMESTAMP, Description: "When does the connection expire?"},
 			{Name: "metadata", Type: proto.ColumnType_JSON, Description: "Metadata attached to the connection."},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the team that owns this connection."},
 			{Name: "upgradeable", Type: proto.ColumnType_BOOL, Description: "Can the connection be upgraded?"},
 			{Name: "scoped", Type: proto.ColumnType_BOOL, Description: "Is the connection scoped?"},
 			{Name: "scopes", Type: proto.ColumnType_JSON, Description: "Security scopes of the connection.", Hydrate: getConnection},
@@ -90,20 +90,24 @@ func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData
 
 	var logger = utils.GetLogger()
 
+	// create new Make client
 	c, err := client.GetClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// connection id - direct query [KeyColumnQuals], or column detail request [h.Item]
+	// prepare params
 	var id int
 	if h.Item != nil {
+		// "scopes" column detail request
 		id = h.Item.(Connection).Id
 	} else {
+		// direct query
 		id = int(d.KeyColumnQuals["id"].GetInt64Value())
 	}
-	config := client.NewRequestConfig("connections", id)
+	var config = client.NewRequestConfig(fmt.Sprintf(`connections/%d`, id))
 
+	// fetch data
 	var result = &ConnectionResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
@@ -132,13 +136,15 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	// iterate over organization teams
 	var teams = h.Item.(Organization).Teams
 	for _, team := range teams {
-		var config = client.NewRequestConfig("connections", 0)
+		// prepare params
+		var config = client.NewRequestConfig("connections")
 		utils.ColumnsToParams(&config.Params, []string{"id", "name", "accountName", "accountLabel", "packageName", "expire", "metadata", "teamId", "upgradeable", "scoped", "accountType", "editable", "uid"})
 		config.Params.Set("teamId", strconv.Itoa(team.Id))
 		if d.QueryContext.Limit != nil {
 			config.Pagination.Limit = int(*d.QueryContext.Limit)
 		}
 
+		// fetch data
 		var pagesLeft = true
 		for pagesLeft {
 			var result = &ConnectionListResponse{}

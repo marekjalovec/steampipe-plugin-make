@@ -41,10 +41,10 @@ func tableTeam(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Key Columns
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The team ID."},
+			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "The ID of the organization."},
 
 			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the team."},
-			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "The ID of the organization."},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")}},
@@ -56,15 +56,18 @@ func getTeam(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (int
 
 	var logger = utils.GetLogger()
 
+	// create new Make client
 	c, err := client.GetClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
+	// prepare params
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
-	config := client.NewRequestConfig("teams", id)
+	var config = client.NewRequestConfig(fmt.Sprintf(`teams/%d`, id))
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 
+	// fetch data
 	var result = &TeamResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
@@ -90,13 +93,15 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var config = client.NewRequestConfig("teams", 0)
+	// prepare params
+	var config = client.NewRequestConfig("teams")
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 	config.Params.Set("organizationId", strconv.Itoa(h.Item.(Organization).Id))
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
 
+	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
 		var result = &TeamListResponse{}
