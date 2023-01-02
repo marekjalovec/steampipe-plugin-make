@@ -11,6 +11,7 @@ _What's new?_
   - [make_user_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_role.md)
   - [make_user_organization_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_organization_role.md)
   - [make_user_team_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_team_role.md)
+  - [make_api_token](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_api_token.md)
 
 
 - Basic functionality

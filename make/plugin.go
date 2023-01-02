@@ -33,6 +33,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"make_user_role":              tableUserRole(ctx),
 			"make_user_organization_role": tableUserOrganizationRole(ctx),
 			"make_user_team_role":         tableUserTeamRole(ctx),
+			"make_api_token":              tableApiToken(ctx),
 		},
 	}
 
