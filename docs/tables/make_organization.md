@@ -1,4 +1,4 @@
-# Table: table_organization
+# Table: make_organization
 
 Organizations are main containers that contain all teams, scenarios, and users.
 

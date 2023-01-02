@@ -1,4 +1,4 @@
-# Table: table_team
+# Table: make_team
 
 Teams are containers that contain scenarios and data accessible only by the members of the team.
 

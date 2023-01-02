@@ -7,6 +7,10 @@ _What's new?_
   - [make_organization](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_organization.md)
   - [make_team](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_team.md)
   - [make_connection](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_connection.md)
+  - [make_user](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user.md)
+  - [make_user_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_role.md)
+  - [make_user_organization_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_organization_role.md)
+  - [make_user_team_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_team_role.md)
 
 
 - Basic functionality
