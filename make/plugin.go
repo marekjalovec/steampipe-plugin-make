@@ -27,7 +27,9 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		TableMap: map[string]*plugin.Table{
 			"make_organization":           tableOrganization(ctx),
+			"make_organization_variable":  tableOrganizationVariable(ctx),
 			"make_team":                   tableTeam(ctx),
+			"make_team_variable":          tableTeamVariable(ctx),
 			"make_connection":             tableConnection(ctx),
 			"make_user":                   tableUser(ctx),
 			"make_user_role":              tableUserRole(ctx),

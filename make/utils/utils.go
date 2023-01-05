@@ -30,6 +30,8 @@ func StandardColumnDescription(key string) string {
 	switch key {
 	case "title":
 		return "The display name for this resource."
+	case "virtual":
+		return "Virtual column, used to map this entity to another object."
 	}
 	return ""
 }

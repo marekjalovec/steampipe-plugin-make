@@ -22,8 +22,8 @@ type User struct {
 	Features       UserFeatures `json:"features"`
 	Avatar         string       `json:"avatar"`
 	LastLogin      string       `json:"lastLogin"`
-	OrganizationId int          `json:"organization_id"`
-	TeamId         int          `json:"team_id"`
+	OrganizationId int
+	TeamId         int
 }
 
 type UserFeatures struct {
@@ -66,8 +66,8 @@ func tableUser(_ context.Context) *plugin.Table {
 			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 
 			// Virtual columns for the query
-			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "Virtual column, has no data"},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "Virtual column, has no data"},
+			{Name: "organization_id", Type: proto.ColumnType_INT, Description: utils.StandardColumnDescription("virtual")},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: utils.StandardColumnDescription("virtual")},
 		},
 	}
 }
