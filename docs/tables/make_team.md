@@ -4,7 +4,7 @@ Teams are containers that contain scenarios and data accessible only by the memb
 
 ## Key columns
 - Provide a numeric `id` if you want to query for a specific Team.
-- Provide a numeric `organization_id` to query multiple Teams from one Organization. This can be either set directly in a `where` clause, or specified as part of `join` with another table. 
+- Provide a numeric `organization_id` to query Teams for a specific Organization. This can be either set directly in a `where` clause, or specified as part of `join` with another table. 
 
 ## Examples
 
@@ -31,10 +31,10 @@ order by t.name
 +------+---------------------------+
 | id   | name                      |
 +------+---------------------------+
-| 1    | Acme Corp. -> Engineering |
-| 2    | Acme Corp. -> HR          |
-| 3    | Acme Corp. -> Ops         |
-| 4    | Acme Corp. -> Sales       |
+| 1    | Brown Inc. -> Engineering |
+| 2    | Brown Inc. -> HR          |
+| 3    | Brown Inc. -> Ops         |
+| 4    | Brown Inc. -> Sales       |
 | ..   | ...                       |
 +------+---------------------------+
 ```

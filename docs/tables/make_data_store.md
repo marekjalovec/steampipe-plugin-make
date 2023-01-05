@@ -4,7 +4,7 @@ Data Stores are used to store data from scenarios or for transferring data in be
 
 ## Key columns
 - Provide a numeric `id` if you want to query for a specific Team.
-- Provide a numeric `team_id` to query multiple Data Stores from one Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
+- Provide a numeric `team_id` to query Data Stores for a specific Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
 
 ## Examples
 
@@ -31,9 +31,9 @@ from make_data_store ds
 +--------------------+------------------+---------------------+
 | organization_name  | team_name        | data_store_name     |
 +--------------------+------------------+---------------------+
-| Acme Corp.         | Engineering      | Lyon Estates        |
-| Acme Corp.         | Engineering      | Lone Pine Mall      |
-| Acme Corp.         | Engineering      | Western Auto Stores |
+| Brown Inc.         | Engineering      | Lyon Estates        |
+| Brown Inc.         | Engineering      | Lone Pine Mall      |
+| Brown Inc.         | Engineering      | Western Auto Stores |
 | ...                | ...              | ...                 |
 +--------------------+------------------+---------------------+
 ```
@@ -56,9 +56,9 @@ order by ds_fill_perc desc
 +--------------------+------------------+---------------------+--------------+
 | organization_name  | team_name        | data_store_name     | ds_fill_perc |
 +--------------------+------------------+---------------------+--------------+
-| Acme Corp.         | Engineering      | Lyon Estates        | 60.84        |
-| Acme Corp.         | Engineering      | Lone Pine Mall      | 14.31        |
-| Acme Corp.         | Engineering      | Western Auto Stores | 8.5          |
+| Brown Inc.         | Engineering      | Lyon Estates        | 60.84        |
+| Brown Inc.         | Engineering      | Lone Pine Mall      | 14.31        |
+| Brown Inc.         | Engineering      | Western Auto Stores | 8.5          |
 | ...                | ...              | ...                 | ...          |
 +--------------------+------------------+---------------------+--------------+
 ```
@@ -82,7 +82,7 @@ order by org_name
 +--------------------+-------+---------+------------+
 | org_name           | count | dslimit | usage_perc |
 +--------------------+-------+---------+------------+
-| Acme Corp.         | 100   | 200     | 50         |
+| Brown Inc.         | 100   | 200     | 50         |
 +--------------------+-------+---------+------------+
 ```
 

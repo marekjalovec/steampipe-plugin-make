@@ -4,7 +4,7 @@ Existing Users within your account, and their attributes.
 
 ## Key columns
 - Provide a numeric `id` if you want to query for a specific User.
-- Provide a numeric `organization_id`, or `team_id` to query multiple Users from an Organization, or a Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table. 
+- Provide a numeric `organization_id`, or `team_id` to query Users for a specific Organization, or a Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table. 
 
 ## Caveat
 - Thanks to the structure of the Make API, Users can appear in the response multiple times if you query this table. Use `distinct`, or `group by` to get unique records.

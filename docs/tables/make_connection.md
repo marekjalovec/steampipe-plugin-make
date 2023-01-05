@@ -4,7 +4,7 @@ For most apps included in Make, it is necessary to create a connection, through 
 
 ## Key columns
 - Provide a numeric `id` if you want to query for a specific Team.
-- Provide a numeric `team_id` to query multiple Connections from one Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
+- Provide a numeric `team_id` to query Connections for a specific Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
 
 ## Caveat
 - Be careful when requesting all columns (`*`) or the `scopes` column without using an `id` in the query. To load this detail Steampipe will have to make one extra API request per Connection returned. 
@@ -34,11 +34,11 @@ from make_connection c
 +-------------------+-------------+-----------------------------+
 | organization_name | team_name   | connection_name             |
 +-------------------+-------------+-----------------------------+
-| Acme Corp.        | Engineering | Airtable | Marty McFly      |
-| Acme Corp.        | Engineering | JIRA | Marty McFly          |
-| Acme Corp.        | Engineering | GMail | Marty McFly         |
-| Acme Corp.        | Engineering | Airtable | Dr. Emmett Brown |
-| Acme Corp.        | Engineering | Airtable | George McFly     |
+| Brown Inc.        | Engineering | Airtable | Marty McFly      |
+| Brown Inc.        | Engineering | JIRA | Marty McFly          |
+| Brown Inc.        | Engineering | GMail | Marty McFly         |
+| Brown Inc.        | Engineering | Airtable | Dr. Emmett Brown |
+| Brown Inc.        | Engineering | Airtable | George McFly     |
 +-------------------+-------------+-----------------------------+
 ```
 
@@ -67,11 +67,11 @@ where c.account_name = 'amazon-lambda'
 +-------------------+-------------+-----------------------------+
 | organization_name | team_name   | connection_name             |
 +-------------------+-------------+-----------------------------+
-| Acme Corp.        | Engineering | AWS Lambda | Marty McFly    |
-| Acme Corp.        | Engineering | AWS Lambda | Biff Tannen    |
-| Acme Corp.        | Engineering | AWS Lambda | Linda McFly    |
-| Acme Corp.        | Engineering | AWS Lambda | Dave McFly     |
-| Acme Corp.        | Engineering | AWS Lambda | Mr. Strickland |
+| Brown Inc.        | Engineering | AWS Lambda | Marty McFly    |
+| Brown Inc.        | Engineering | AWS Lambda | Biff Tannen    |
+| Brown Inc.        | Engineering | AWS Lambda | Linda McFly    |
+| Brown Inc.        | Engineering | AWS Lambda | Dave McFly     |
+| Brown Inc.        | Engineering | AWS Lambda | Mr. Strickland |
 +-------------------+-------------+-----------------------------+
 ```
 
