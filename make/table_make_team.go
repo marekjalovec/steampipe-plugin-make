@@ -11,21 +11,6 @@ import (
 	"strconv"
 )
 
-type Team struct {
-	Id             int    `json:"id"`
-	Name           string `json:"name"`
-	OrganizationId int    `json:"organizationId"`
-}
-
-type TeamResponse struct {
-	Team Team `json:"team"`
-}
-
-type TeamListResponse struct {
-	Teams      []Team     `json:"teams"`
-	Pagination Pagination `json:"pg"`
-}
-
 func tableTeam(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_team",
@@ -68,11 +53,11 @@ func getTeam(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (int
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 
 	// fetch data
-	var result = &TeamResponse{}
+	var result = &client.TeamResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_team.getTeam", "connection_error", err)
-		return nil, err
+		logger.Error("make_team.getTeam", "request_error", err)
+		return nil, c.HandleKnownErrors(err, "teams:read")
 	}
 
 	return result.Team, nil
@@ -96,7 +81,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	// prepare params
 	var config = client.NewRequestConfig("teams")
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
-	config.Params.Set("organizationId", strconv.Itoa(h.Item.(Organization).Id))
+	config.Params.Set("organizationId", strconv.Itoa(h.Item.(client.Organization).Id))
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
@@ -104,11 +89,11 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
-		var result = &TeamListResponse{}
+		var result = &client.TeamListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_team.listTeams", "connection_error", err)
-			return nil, err
+			logger.Error("make_team.listTeams", "request_error", err)
+			return nil, c.HandleKnownErrors(err, "teams:read")
 		}
 
 		// stream results

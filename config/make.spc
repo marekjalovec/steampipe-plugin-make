@@ -3,7 +3,8 @@ connection "make" {
 
   # Make API token
   # To generate the token visit the API tab in your Profile page in Make.
-  # Minimum scopes are connections:read and teams:read.
+  # Minimum scopes are connections:read and teams:read, as these objects cascade to other API calls.
+  # If you add user:read, the plugin can give you useful hints about missing scopes.
   # Add anything you want to have access to on top of that.
   api_token = "ecc9f531-xxxx-xxxx-xxxx-e6de6b3ebbe2"
 

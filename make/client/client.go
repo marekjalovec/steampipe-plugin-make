@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -26,6 +27,7 @@ type Client struct {
 	apiToken    string
 	logger      hclog.Logger
 	pageSize    int
+	scopes      *[]string
 }
 
 var clientInstance *Client
@@ -59,7 +61,10 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 		baseURL:     *config.EnvironmentURL,
 		logger:      utils.GetLogger(),
 		pageSize:    defaultPageSize,
+		scopes:      nil,
 	}
+
+	clientInstance.loadScopes()
 
 	return clientInstance, nil
 }
@@ -130,8 +135,7 @@ func (at *Client) do(req *http.Request, response interface{}) error {
 
 	// handle HTTP errors
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		//return makeHTTPClientError(reqUrl, resp) // TODO
-		return fmt.Errorf("HTTP request failure on %s [%d]: %w", reqUrl, resp.StatusCode, err)
+		return makeHttpError(reqUrl, resp)
 	}
 
 	// read response body
@@ -146,7 +150,61 @@ func (at *Client) do(req *http.Request, response interface{}) error {
 		return fmt.Errorf("JSON decode failed on %s: %s error: %w", reqUrl, hclog.Quote(b), err)
 	}
 
-	at.logger.Info(fmt.Sprintf("Response: %s", string(b)))
-
 	return nil
+}
+
+func (at *Client) loadScopes() {
+	var config = NewRequestConfig("users/me/api-tokens")
+	var result = &ApiTokenListResponse{}
+	err := at.Get(&config, result)
+	if err == nil {
+		for _, token := range result.ApiTokens {
+			var parts = strings.Split(token.Token, "-")
+			if len(parts) > 0 && strings.HasPrefix(at.apiToken, parts[0]) {
+				at.scopes = &token.Scope
+			}
+		}
+	}
+}
+
+func (at *Client) scopesLoaded() bool {
+	return at.scopes != nil
+}
+
+func (at *Client) hasScope(scope string) bool {
+	if at.scopes == nil {
+		return false
+	}
+
+	for _, v := range *at.scopes {
+		if v == scope {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (at *Client) HandleKnownErrors(err error, scope string) error {
+	var httpErr = getHttpError(err)
+	if httpErr == nil {
+		return err
+	}
+
+	// resource not found
+	if httpErr.StatusCode == 403 || httpErr.StatusCode == 404 {
+		return fmt.Errorf(`the resource couldn't be fetched; you either do not have access to it, or it does not exist`)
+	}
+
+	// 401 Unauthorized, "user:read" is missing - we can't verify the scopes
+	if httpErr.StatusCode == 401 && !at.scopesLoaded() {
+		return fmt.Errorf(`the resource couldn't be fetched, but we can't verify if it's caused by a missing scope, because the scope "user:read" is missing as well`)
+	}
+
+	// 401 Unauthorized, required scope is missing
+	if httpErr.StatusCode == 401 && !at.hasScope(scope) {
+		return fmt.Errorf(`the resource couldn't be fetched, because your API Token is missing "%s" in the allowed scopes - please create a new API Token and add this scope to the list`, scope)
+	}
+
+	return httpErr
 }

@@ -9,17 +9,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-type ApiToken struct {
-	Token   string   `json:"token"`
-	Label   string   `json:"label"`
-	Scope   []string `json:"scope"`
-	Created string   `json:"created"`
-}
-
-type ApiTokenListResponse struct {
-	ApiTokens []ApiToken `json:"apiTokens"`
-}
-
 func tableApiToken(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_api_token",
@@ -58,11 +47,11 @@ func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	}
 
 	// fetch data
-	var result = &ApiTokenListResponse{}
+	var result = &client.ApiTokenListResponse{}
 	err = c.Get(&config, result)
 	if err != nil {
-		logger.Error("make_api_token.listApiTokens", "connection_error", err)
-		return nil, err
+		logger.Error("make_api_token.listApiTokens", "request_error", err)
+		return nil, c.HandleKnownErrors(err, "user:read")
 	}
 
 	// stream results

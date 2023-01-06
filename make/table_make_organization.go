@@ -10,46 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-type Organization struct {
-	Id          int                 `json:"id"`
-	Name        string              `json:"name"`
-	CountryId   int                 `json:"countryId"`
-	TimezoneId  int                 `json:"timezoneId"`
-	License     OrganizationLicence `json:"license"`
-	Zone        string              `json:"zone"`
-	ServiceName string              `json:"serviceName"`
-	IsPaused    bool                `json:"isPaused"`
-	ExternalId  string              `json:"externalId"`
-	Teams       []OrganizationTeam  `json:"teams"` // used to load make_connection
-}
-
-type OrganizationTeam struct {
-	Id   int    `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-}
-
-type OrganizationLicence struct {
-	Apps       []string `json:"apps"`
-	Users      int      `json:"users"`
-	Dslimit    int64    `json:"dslimit"`
-	Fslimit    int64    `json:"fslimit"`
-	Iolimit    int64    `json:"iolimit"`
-	Dsslimit   int64    `json:"dsslimit"`
-	Fulltext   bool     `json:"fulltext"`
-	Interval   int      `json:"interval"`
-	Transfer   int64    `json:"transfer"`
-	Operations int64    `json:"operations"`
-}
-
-type OrganizationResponse struct {
-	Organization Organization `json:"organization"`
-}
-
-type OrganizationListResponse struct {
-	Organizations []Organization `json:"organizations"`
-	Pagination    Pagination     `json:"pg"`
-}
-
 func tableOrganization(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_organization",
@@ -98,11 +58,11 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 
 	// fetch data
-	var result = &OrganizationResponse{}
+	var result = &client.OrganizationResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Info("getOrganization", err.Error())
-		return nil, err
+		logger.Error("make_organization.getOrganization", "request_error", err)
+		return nil, c.HandleKnownErrors(err, "organizations:read")
 	}
 
 	return result.Organization, nil
@@ -129,11 +89,11 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
-		var result = &OrganizationListResponse{}
+		var result = &client.OrganizationListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_organization.listOrganizations", "connection_error", err)
-			return nil, err
+			logger.Error("make_organization.listOrganizations", "request_error", err)
+			return nil, c.HandleKnownErrors(err, "organizations:read")
 		}
 
 		// stream results

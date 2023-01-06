@@ -10,18 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-type TeamVariable struct {
-	Name     string `json:"name"`
-	TypeId   int    `json:"typeId"`
-	Value    any    `json:"value"`
-	IsSystem bool   `json:"isSystem"`
-	TeamId   int
-}
-
-type TeamVariableListResponse struct {
-	TeamVariables []TeamVariable `json:"teamVariables"`
-}
-
 func tableTeamVariable(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_team_variable",
@@ -62,7 +50,7 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	}
 
 	// iterate over organization teams
-	var organization = h.Item.(Organization)
+	var organization = h.Item.(client.Organization)
 	var teams = organization.Teams
 	for _, team := range teams {
 		// prepare params
@@ -74,11 +62,11 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		// fetch data
 		var pagesLeft = true
 		for pagesLeft {
-			var result = &TeamVariableListResponse{}
+			var result = &client.TeamVariableListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_team_variable.listTeamVariables", "connection_error", err)
-				return nil, err
+				logger.Error("make_team_variable.listTeamVariables", "request_error", err)
+				return nil, c.HandleKnownErrors(err, "team-variables:read")
 			}
 
 			// stream results

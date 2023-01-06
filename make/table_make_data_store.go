@@ -11,25 +11,6 @@ import (
 	"strconv"
 )
 
-type DataStore struct {
-	Id              int    `json:"id"`
-	Name            string `json:"name"`
-	Records         any    `json:"records"`
-	Size            string `json:"size"`
-	MaxSize         string `json:"maxSize"`
-	DatastructureId int    `json:"datastructureId"`
-	TeamId          int    `json:"teamId"`
-}
-
-type DataStoreResponse struct {
-	DataStore DataStore `json:"dataStore"`
-}
-
-type DataStoreListResponse struct {
-	DataStores []DataStore `json:"dataStores"`
-	Pg         Pagination  `json:"pg"`
-}
-
 func tableDataStore(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_data_store",
@@ -77,11 +58,11 @@ func getDataStore(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	utils.ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
 
 	// fetch data
-	var result = &DataStoreResponse{}
+	var result = &client.DataStoreResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_data_store.getDataStore", "connection_error", err)
-		return nil, err
+		logger.Error("make_data_store.getDataStore", "request_error", err)
+		return nil, c.HandleKnownErrors(err, "datastores:read")
 	}
 
 	return result.DataStore, nil
@@ -103,7 +84,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	}
 
 	// iterate over organization teams
-	var teams = h.Item.(Organization).Teams
+	var teams = h.Item.(client.Organization).Teams
 	for _, team := range teams {
 		// prepare params
 		var config = client.NewRequestConfig("data-stores")
@@ -116,11 +97,11 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		// fetch data
 		var pagesLeft = true
 		for pagesLeft {
-			var result = &DataStoreListResponse{}
+			var result = &client.DataStoreListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_data_store.listDataStores", "connection_error", err)
-				return nil, err
+				logger.Error("make_data_store.listDataStores", "request_error", err)
+				return nil, c.HandleKnownErrors(err, "datastores:read")
 			}
 
 			// stream results

@@ -11,43 +11,6 @@ import (
 	"strconv"
 )
 
-type Connection struct {
-	Id           int                `json:"id"`
-	Name         string             `json:"name"`
-	AccountName  string             `json:"accountName"`
-	AccountLabel string             `json:"accountLabel"`
-	PackageName  string             `json:"packageName"`
-	Expire       string             `json:"expire"`
-	Metadata     ConnectionMetadata `json:"metadata,omitempty"`
-	TeamId       int                `json:"teamId"`
-	Upgradeable  bool               `json:"upgradeable"`
-	Scoped       bool               `json:"scoped"`
-	Scopes       []ConnectionScope  `json:"scopes,omitempty"`
-	AccountType  string             `json:"accountType"`
-	Editable     bool               `json:"editable"`
-	Uid          string             `json:"uid"`
-}
-
-type ConnectionMetadata struct {
-	Type  string `json:"type,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-type ConnectionScope struct {
-	Id      string `json:"id,omitempty"`
-	Name    string `json:"name,omitempty"`
-	Account string `json:"account,omitempty"`
-}
-
-type ConnectionResponse struct {
-	Connection Connection `json:"connection"`
-}
-
-type ConnectionListResponse struct {
-	Connections []Connection `json:"connections"`
-	Pg          Pagination   `json:"pg"`
-}
-
 func tableConnection(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_connection",
@@ -100,7 +63,7 @@ func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData
 	var id int
 	if h.Item != nil {
 		// "scopes" column detail request
-		id = h.Item.(Connection).Id
+		id = h.Item.(client.Connection).Id
 	} else {
 		// direct query
 		id = int(d.KeyColumnQuals["id"].GetInt64Value())
@@ -108,11 +71,11 @@ func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData
 	var config = client.NewRequestConfig(fmt.Sprintf(`connections/%d`, id))
 
 	// fetch data
-	var result = &ConnectionResponse{}
+	var result = &client.ConnectionResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_connection.getConnection", "connection_error", err)
-		return nil, err
+		logger.Error("make_connection.getConnection", "request_error", err)
+		return nil, c.HandleKnownErrors(err, "connections:read")
 	}
 
 	return result.Connection, nil
@@ -134,7 +97,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	}
 
 	// iterate over organization teams
-	var teams = h.Item.(Organization).Teams
+	var teams = h.Item.(client.Organization).Teams
 	for _, team := range teams {
 		// prepare params
 		var config = client.NewRequestConfig("connections")
@@ -147,11 +110,11 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		// fetch data
 		var pagesLeft = true
 		for pagesLeft {
-			var result = &ConnectionListResponse{}
+			var result = &client.ConnectionListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_connection.listConnections", "connection_error", err)
-				return nil, err
+				logger.Error("make_connection.listConnections", "request_error", err)
+				return nil, c.HandleKnownErrors(err, "connections:read")
 			}
 
 			// stream results

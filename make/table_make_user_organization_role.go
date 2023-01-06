@@ -10,18 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-type UserOrganizationRole struct {
-	UserId         int    `json:"userId"`
-	UsersRoleId    int    `json:"usersRoleId"`
-	OrganizationId int    `json:"organizationId"`
-	Invitation     string `json:"invitation"`
-}
-
-type UserOrganizationRoleListResponse struct {
-	Users      []UserOrganizationRole `json:"userOrganizationRoles"`
-	Pagination Pagination             `json:"pg"`
-}
-
 func tableUserOrganizationRole(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_user_organization_role",
@@ -66,11 +54,11 @@ func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plug
 	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
-		var result = &UserOrganizationRoleListResponse{}
+		var result = &client.UserOrganizationRoleListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_user_organization_role.listUserOrganizationRoles", "connection_error", err)
-			return nil, err
+			logger.Error("make_user_organization_role.listUserOrganizationRoles", "request_error", err)
+			return nil, c.HandleKnownErrors(err, "user:read")
 		}
 
 		// stream results

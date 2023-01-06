@@ -20,3 +20,4 @@ _What's new?_
 - Basic functionality
 
   - Client-side rate limiting
+  - Missing API Token scope suggestions in case an API call fails

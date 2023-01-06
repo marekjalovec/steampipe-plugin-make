@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/schema"
 	"net/url"
@@ -59,7 +58,6 @@ func validateEnvironmentUrl(envUrl *string) error {
 
 	// not a valid url
 	u, err := url.ParseRequestURI(*envUrl)
-	utils.GetLogger().Info("URL", utils.ToJSON(u))
 	if err != nil {
 		return fmt.Errorf("[configuration - make.spc] the environment URL does not seem to be a properly formatted URL")
 	}

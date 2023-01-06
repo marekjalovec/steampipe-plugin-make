@@ -11,34 +11,6 @@ import (
 	"strconv"
 )
 
-type User struct {
-	Id             int          `json:"id"`
-	Name           string       `json:"name"`
-	Email          string       `json:"email"`
-	Language       string       `json:"language"`
-	TimezoneId     int          `json:"timezoneId"`
-	LocaleId       int          `json:"localeId"`
-	CountryId      int          `json:"countryId"`
-	Features       UserFeatures `json:"features"`
-	Avatar         string       `json:"avatar"`
-	LastLogin      string       `json:"lastLogin"`
-	OrganizationId int
-	TeamId         int
-}
-
-type UserFeatures struct {
-	AllowApps       bool `json:"allow_apps"`
-	AllowAppsJs     bool `json:"allow_apps_js"`
-	PrivateModules  bool `json:"private_modules"`
-	AllowAppsCommit bool `json:"allow_apps_commit"`
-	LocalAccess     bool `json:"local_access"`
-}
-
-type UserListResponse struct {
-	Users      []User     `json:"users"`
-	Pagination Pagination `json:"pg"`
-}
-
 func tableUser(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_user",
@@ -88,7 +60,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 	}
 
 	// iterate over organization teams
-	var organization = h.Item.(Organization)
+	var organization = h.Item.(client.Organization)
 	var teams = organization.Teams
 	for _, team := range teams {
 		// prepare params
@@ -101,11 +73,11 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		// fetch data
 		var pagesLeft = true
 		for pagesLeft {
-			var result = &UserListResponse{}
+			var result = &client.UserListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_user.listUsers", "connection_error", err)
-				return nil, err
+				logger.Error("make_user.listUsers", "request_error", err)
+				return nil, c.HandleKnownErrors(err, "user:read")
 			}
 
 			// stream results

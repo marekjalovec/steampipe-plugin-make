@@ -10,18 +10,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-type OrganizationVariable struct {
-	Name           string `json:"name"`
-	TypeId         int    `json:"typeId"`
-	Value          any    `json:"value"`
-	IsSystem       bool   `json:"isSystem"`
-	OrganizationId int
-}
-
-type OrganizationVariableListResponse struct {
-	OrganizationVariables []OrganizationVariable `json:"organizationVariables"`
-}
-
 func tableOrganizationVariable(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "make_organization_variable",
@@ -62,7 +50,7 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 	}
 
 	// prepare params
-	var orgId = h.Item.(Organization).Id
+	var orgId = h.Item.(client.Organization).Id
 	var config = client.NewRequestConfig(fmt.Sprintf(`organizations/%d/variables`, orgId))
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
@@ -71,11 +59,11 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 	// fetch data
 	var pagesLeft = true
 	for pagesLeft {
-		var result = &OrganizationVariableListResponse{}
+		var result = &client.OrganizationVariableListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_organization_variable.listOrganizationVariables", "connection_error", err)
-			return nil, err
+			logger.Error("make_organization_variable.listOrganizationVariables", "request_error", err)
+			return nil, c.HandleKnownErrors(err, "organization-variables:read")
 		}
 
 		// stream results
