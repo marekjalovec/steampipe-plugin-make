@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/schema"
 	"net/url"
@@ -73,7 +74,13 @@ func validateEnvironmentUrl(envUrl *string) error {
 func validateApiToken(apiToken *string) error {
 	// empty
 	if apiToken == nil {
-		return fmt.Errorf("[configuration - make.spc] the API Token is not defined; to generate the token visit the API tab in your Profile page in Make")
+		return fmt.Errorf("[configuration - make.spc] the API Token is not defined; to get a token, visit the API tab in your Profile page in Make")
+	}
+
+	// invalid format
+	_, err := uuid.Parse(*apiToken)
+	if err != nil {
+		return fmt.Errorf("[configuration - make.spc] the API Token seems to have a wrong format; to get a token, visit the API tab in your Profile page in Make")
 	}
 
 	return nil

@@ -3,6 +3,7 @@ module github.com/marekjalovec/steampipe-plugin-make
 go 1.19
 
 require (
+	github.com/google/uuid v1.1.2
 	github.com/hashicorp/go-hclog v1.2.2
 	github.com/turbot/steampipe-plugin-sdk/v4 v4.1.9
 )
