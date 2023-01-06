@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -24,7 +23,7 @@ type Client struct {
 	client      *http.Client
 	rateLimiter <-chan time.Time
 	baseURL     string
-	apiKey      string
+	apiToken    string
 	logger      hclog.Logger
 	pageSize    int
 }
@@ -37,9 +36,10 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 		return clientInstance, nil
 	}
 
-	var config = getConfig(connection)
-	var envUrl = strings.TrimSuffix(*config.EnvironmentURL, "/")
-
+	config, err := getConfig(connection)
+	if err != nil {
+		return nil, err
+	}
 	if config.RateLimit == nil {
 		config.RateLimit = &defaultRateLimit
 	}
@@ -55,8 +55,8 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 	clientInstance = &Client{
 		client:      http.DefaultClient,
 		rateLimiter: rateLimiter,
-		apiKey:      *config.APIKey,
-		baseURL:     envUrl,
+		apiToken:    *config.ApiToken,
+		baseURL:     *config.EnvironmentURL,
 		logger:      utils.GetLogger(),
 		pageSize:    defaultPageSize,
 	}
@@ -98,7 +98,7 @@ func (at *Client) createAuthorizedRequest(apiUrl string) (*http.Request, error) 
 
 	// set headers and query params
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Token %s", at.apiKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Token %s", at.apiToken))
 
 	return req, nil
 }
