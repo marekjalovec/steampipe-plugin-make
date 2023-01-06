@@ -1,4 +1,4 @@
-# [Make.com](https://www.make.com/en) Plugin for Steampipe
+# [Make.com](https://www.make.com/en) Plugin for [Steampipe](https://steampipe.io)
 
 Use SQL to query your Make Scenarios, Connections, Variables, Users, and more.
 
@@ -37,7 +37,13 @@ cp config/* ~/.steampipe/config
 vi ~/.steampipe/config/make.spc
 ```
 
-4] Try it!
+4] Increase logging level (optional, but very helpful when debugging)
+
+```
+export STEAMPIPE_LOG_LEVEL=INFO
+```
+
+5] Try it!
 
 ```
 steampipe query
@@ -45,7 +51,7 @@ steampipe query
 > select c.id, c.name from make_connection c
 ```
 
-5] Further reading:
+6] Further reading:
 
 - [Make API documentation](https://www.make.com/en/api-documentation)
 - [Table definitions & examples](https://github.com/marekjalovec/steampipe-plugin-make/tree/main/docs/tables)
