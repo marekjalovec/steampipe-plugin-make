@@ -191,19 +191,18 @@ func (at *Client) HandleKnownErrors(err error, scope string) error {
 		return err
 	}
 
-	// resource not found
+	// 403 Forbidden or 404 Not Found
 	if httpErr.StatusCode == 403 || httpErr.StatusCode == 404 {
-		return fmt.Errorf(`the resource couldn't be fetched; you either do not have access to it, or it does not exist`)
+		return fmt.Errorf(`We couldn't fetch the resource you requested. You either don't have access to it, or it doesn't exist.`)
 	}
 
-	// 401 Unauthorized, "user:read" is missing - we can't verify the scopes
-	if httpErr.StatusCode == 401 && !at.scopesLoaded() {
-		return fmt.Errorf(`the resource couldn't be fetched, but we can't verify if it's caused by a missing scope, because the scope "user:read" is missing as well`)
-	}
-
-	// 401 Unauthorized, required scope is missing
-	if httpErr.StatusCode == 401 && !at.hasScope(scope) {
-		return fmt.Errorf(`the resource couldn't be fetched, because your API Token is missing "%s" in the allowed scopes - please create a new API Token and add this scope to the list`, scope)
+	// 401 Unauthorized
+	if httpErr.StatusCode == 401 {
+		if at.scopesLoaded() && !at.hasScope(scope) {
+			return fmt.Errorf(`We couldn't fetch the resource you requested, because your API Token is missing "%s" in the enabled scopes - create a new API Token and add this scope to the list, please.`, scope)
+		} else {
+			return fmt.Errorf(`We couldn't fetch the resource you requested. This might be caused by "%s" scope not being enabled. Check your API Token settings in Make, please.`, scope)
+		}
 	}
 
 	return httpErr
