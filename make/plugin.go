@@ -25,17 +25,17 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			Schema:      client.ConfigSchema,
 		},
 		TableMap: map[string]*plugin.Table{
+			"make_api_token":              tableApiToken(ctx),
+			"make_connection":             tableConnection(ctx),
+			"make_data_store":             tableDataStore(ctx),
 			"make_organization":           tableOrganization(ctx),
 			"make_organization_variable":  tableOrganizationVariable(ctx),
 			"make_team":                   tableTeam(ctx),
 			"make_team_variable":          tableTeamVariable(ctx),
-			"make_connection":             tableConnection(ctx),
 			"make_user":                   tableUser(ctx),
-			"make_user_role":              tableUserRole(ctx),
 			"make_user_organization_role": tableUserOrganizationRole(ctx),
+			"make_user_role":              tableUserRole(ctx),
 			"make_user_team_role":         tableUserTeamRole(ctx),
-			"make_api_token":              tableApiToken(ctx),
-			"make_data_store":             tableDataStore(ctx),
 		},
 	}
 
