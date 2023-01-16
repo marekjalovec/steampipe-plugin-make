@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -35,26 +34,24 @@ func tableUser(_ context.Context) *plugin.Table {
 			{Name: "last_login", Type: proto.ColumnType_TIMESTAMP, Description: "Date and time of the last login."},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 
 			// Virtual columns for the query
-			{Name: "organization_id", Type: proto.ColumnType_INT, Description: utils.StandardColumnDescription("virtual")},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: utils.StandardColumnDescription("virtual")},
+			{Name: "organization_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
 		},
 	}
 }
 
 func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listUsers", d, h)
+	LogQueryContext("listUsers", ctx, d, h)
 
 	if h.Item == nil {
 		return nil, fmt.Errorf("parent organization not defined")
 	}
 
-	var logger = utils.GetLogger()
-
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +73,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 			var result = &client.UserListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_user.listUsers", "request_error", err)
+				plugin.Logger(ctx).Error("make_user.listUsers", "request_error", err)
 				return nil, c.HandleKnownErrors(err, "user:read")
 			}
 

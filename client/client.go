@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/go-hclog"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"io"
 	"net/http"
@@ -33,7 +32,7 @@ type Client struct {
 var clientInstance *Client
 
 // GetClient Make client constructor
-func GetClient(connection *plugin.Connection) (*Client, error) {
+func GetClient(ctx context.Context, connection *plugin.Connection) (*Client, error) {
 	if clientInstance != nil {
 		return clientInstance, nil
 	}
@@ -59,7 +58,7 @@ func GetClient(connection *plugin.Connection) (*Client, error) {
 		rateLimiter: rateLimiter,
 		apiToken:    *config.ApiToken,
 		baseURL:     *config.EnvironmentURL,
-		logger:      utils.GetLogger(),
+		logger:      plugin.Logger(ctx),
 		pageSize:    defaultPageSize,
 		scopes:      nil,
 	}
@@ -206,4 +205,9 @@ func (at *Client) HandleKnownErrors(err error, scope string) error {
 	}
 
 	return httpErr
+}
+
+func ToJSON(value interface{}) string {
+	j, _ := json.Marshal(value)
+	return string(j)
 }

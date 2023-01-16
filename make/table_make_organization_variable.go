@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -26,25 +25,23 @@ func tableOrganizationVariable(_ context.Context) *plugin.Table {
 			{Name: "is_system", Type: proto.ColumnType_BOOL, Description: "Is the Organization Variable set by Make, or by users?"},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 
 			// Virtual columns for the query
-			{Name: "organization_id", Type: proto.ColumnType_INT, Description: utils.StandardColumnDescription("virtual")},
+			{Name: "organization_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
 		},
 	}
 }
 
 func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listOrganizationVariables", d, h)
+	LogQueryContext("listOrganizationVariables", ctx, d, h)
 
 	if h.Item == nil {
 		return nil, fmt.Errorf("no parent item found")
 	}
 
-	var logger = utils.GetLogger()
-
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +59,7 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 		var result = &client.OrganizationVariableListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_organization_variable.listOrganizationVariables", "request_error", err)
+			plugin.Logger(ctx).Error("make_organization_variable.listOrganizationVariables", "request_error", err)
 			return nil, c.HandleKnownErrors(err, "organization-variables:read")
 		}
 
