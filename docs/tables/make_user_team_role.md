@@ -2,7 +2,7 @@
 
 Assigned User Roles with a Team.
 
-## Key columns
+### Key columns
 - Provide a numeric `id` if you want to query for a specific User Role assignment.
 
 ## Examples

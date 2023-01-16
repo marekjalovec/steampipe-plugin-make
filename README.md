@@ -1,3 +1,5 @@
+![Steampipe + Make.com](docs/make-social-graphic.png)
+
 # [Make.com](https://www.make.com/en) Plugin for [Steampipe](https://steampipe.io)
 
 Use SQL to query your Make Scenarios, Connections, Variables, Users, and more.
