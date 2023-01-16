@@ -32,7 +32,7 @@ func tableConnection(_ context.Context) *plugin.Table {
 			{Name: "account_name", Type: proto.ColumnType_STRING, Description: "The system name of the application tied to this Connection."},
 			{Name: "account_label", Type: proto.ColumnType_STRING, Description: "The user friendly name of the application tied to this Connection."},
 			{Name: "account_type", Type: proto.ColumnType_STRING, Description: "Authentication type."},
-			{Name: "package_name", Type: proto.ColumnType_STRING, Description: "No idea at this point, sorry."},
+			{Name: "package_name", Type: proto.ColumnType_STRING, Description: "Package name, present when connection belongs to a Custom App."},
 			{Name: "expire", Type: proto.ColumnType_TIMESTAMP, Description: "When does the Connection expire?"},
 			{Name: "metadata", Type: proto.ColumnType_JSON, Description: "Metadata attached to the Connection."},
 			{Name: "upgradeable", Type: proto.ColumnType_BOOL, Description: "Can the Connection be upgraded?"},

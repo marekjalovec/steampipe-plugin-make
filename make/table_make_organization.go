@@ -30,8 +30,8 @@ func tableOrganization(_ context.Context) *plugin.Table {
 			{Name: "timezone_id", Type: proto.ColumnType_INT, Description: "The ID of the timezone associated with the Organization."},
 			{Name: "license", Type: proto.ColumnType_JSON, Description: "Licence information and limits."},
 			{Name: "zone", Type: proto.ColumnType_STRING, Description: "Zone where the Organization exists."},
-			{Name: "service_name", Type: proto.ColumnType_STRING, Description: ""},
-			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: ""},
+			{Name: "service_name", Type: proto.ColumnType_STRING, Description: "Service name."},
+			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: "Is the organization paused?"},
 			{Name: "external_id", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},
 
 			// Standard Columns
