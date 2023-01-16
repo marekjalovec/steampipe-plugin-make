@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableUserOrganizationRole(_ context.Context) *plugin.Table {
@@ -42,7 +42,7 @@ func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plug
 	}
 
 	// prepare params
-	var userId = int(d.KeyColumnQuals["user_id"].GetInt64Value())
+	var userId = int(d.EqualsQuals["user_id"].GetInt64Value())
 	var config = client.NewRequestConfig(fmt.Sprintf(`users/%d/user-organization-roles`, userId))
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
@@ -65,7 +65,7 @@ func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plug
 
 		// pagination
 		var resultCount = len(result.Users)
-		if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
+		if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 			pagesLeft = false
 		} else {
 			config.Pagination.Offset += config.Pagination.Limit

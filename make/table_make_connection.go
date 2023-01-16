@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strconv"
 )
 
@@ -63,7 +63,7 @@ func getConnection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		id = h.Item.(client.Connection).Id
 	} else {
 		// direct query
-		id = int(d.KeyColumnQuals["id"].GetInt64Value())
+		id = int(d.EqualsQuals["id"].GetInt64Value())
 	}
 	var config = client.NewRequestConfig(fmt.Sprintf(`connections/%d`, id))
 
@@ -118,7 +118,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 			}
 
 			// break both cycles if we have enough rows
-			if d.QueryStatus.RowsRemaining(ctx) <= 0 {
+			if d.RowsRemaining(ctx) <= 0 {
 				return nil, nil
 			}
 

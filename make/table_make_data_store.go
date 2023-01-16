@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strconv"
 )
 
@@ -50,7 +50,7 @@ func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	}
 
 	// prepare params
-	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
+	var id = int(d.EqualsQuals["id"].GetInt64Value())
 	var config = client.NewRequestConfig(fmt.Sprintf(`data-stores/%d`, id))
 	ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
 
@@ -105,7 +105,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 			}
 
 			// break both cycles if we have enough rows
-			if d.QueryStatus.RowsRemaining(ctx) <= 0 {
+			if d.RowsRemaining(ctx) <= 0 {
 				return nil, nil
 			}
 

@@ -3,7 +3,7 @@ package make
 import (
 	"context"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"net/url"
 )
 
@@ -18,7 +18,7 @@ func ColumnsToParams(params *url.Values, columns []string) {
 func LogQueryContext(namespace string, ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) {
 	plugin.Logger(ctx).Info(namespace, "Table", d.Table.Name)
 	plugin.Logger(ctx).Info(namespace, "QueryContext", client.ToJSON(d.QueryContext))
-	plugin.Logger(ctx).Info(namespace, "KeyColumnQuals", client.ToJSON(d.KeyColumnQuals))
+	plugin.Logger(ctx).Info(namespace, "EqualsQuals", client.ToJSON(d.EqualsQuals))
 	plugin.Logger(ctx).Info(namespace, "HydrateData", client.ToJSON(h))
 }
 
