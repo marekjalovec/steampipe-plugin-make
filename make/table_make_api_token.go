@@ -2,7 +2,7 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/steampipe-plugin-make/make/client"
+	"github.com/marekjalovec/steampipe-plugin-make/client"
 	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
