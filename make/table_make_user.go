@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strconv"
 )
 
@@ -86,7 +86,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 			// pagination
 			var resultCount = len(result.Users)
-			if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
+			if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 				pagesLeft = false
 			} else {
 				config.Pagination.Offset += config.Pagination.Limit

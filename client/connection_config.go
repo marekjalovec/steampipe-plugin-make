@@ -3,8 +3,8 @@ package client
 import (
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/schema"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/schema"
 	"net/url"
 	"strings"
 )

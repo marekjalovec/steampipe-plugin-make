@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"strconv"
 )
 
@@ -45,7 +45,7 @@ func getTeam(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	}
 
 	// prepare params
-	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
+	var id = int(d.EqualsQuals["id"].GetInt64Value())
 	var config = client.NewRequestConfig(fmt.Sprintf(`teams/%d`, id))
 	ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
 
@@ -98,7 +98,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 		// pagination
 		var resultCount = len(result.Teams)
-		if d.QueryStatus.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
+		if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
 			pagesLeft = false
 		} else {
 			config.Pagination.Offset += config.Pagination.Limit
