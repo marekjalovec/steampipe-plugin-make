@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -43,18 +42,16 @@ func tableConnection(_ context.Context) *plugin.Table {
 			{Name: "uid", Type: proto.ColumnType_STRING, Description: "UID of this Connection."},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 		},
 	}
 }
 
-func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("getConnection", d, h)
-
-	var logger = utils.GetLogger()
+func getConnection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	LogQueryContext("getConnection", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +71,7 @@ func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData
 	var result = &client.ConnectionResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_connection.getConnection", "request_error", err)
+		plugin.Logger(ctx).Error("make_connection.getConnection", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "connections:read")
 	}
 
@@ -82,16 +79,14 @@ func getConnection(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData
 }
 
 func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listConnections", d, h)
+	LogQueryContext("listConnections", ctx, d, h)
 
 	if h.Item == nil {
 		return nil, fmt.Errorf("parent organization not defined")
 	}
 
-	var logger = utils.GetLogger()
-
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +96,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	for _, team := range teams {
 		// prepare params
 		var config = client.NewRequestConfig("connections")
-		utils.ColumnsToParams(&config.Params, []string{"id", "name", "accountName", "accountLabel", "packageName", "expire", "metadata", "teamId", "upgradeable", "scoped", "accountType", "editable", "uid"})
+		ColumnsToParams(&config.Params, []string{"id", "name", "accountName", "accountLabel", "packageName", "expire", "metadata", "teamId", "upgradeable", "scoped", "accountType", "editable", "uid"})
 		config.Params.Set("teamId", strconv.Itoa(team.Id))
 		if d.QueryContext.Limit != nil {
 			config.Pagination.Limit = int(*d.QueryContext.Limit)
@@ -113,7 +108,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 			var result = &client.ConnectionListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_connection.listConnections", "request_error", err)
+				plugin.Logger(ctx).Error("make_connection.listConnections", "request_error", err)
 				return nil, c.HandleKnownErrors(err, "connections:read")
 			}
 

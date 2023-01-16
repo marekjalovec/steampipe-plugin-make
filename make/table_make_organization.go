@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -36,18 +35,16 @@ func tableOrganization(_ context.Context) *plugin.Table {
 			{Name: "external_id", Type: proto.ColumnType_STRING, Description: "Make private instances use the externalId parameter for security reasons."},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 		},
 	}
 }
 
-func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("getOrganization", d, h)
-
-	var logger = utils.GetLogger()
+func getOrganization(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	LogQueryContext("getOrganization", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +52,13 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	// prepare params
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
 	var config = client.NewRequestConfig(fmt.Sprintf(`organizations/%d`, id))
-	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
+	ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 
 	// fetch data
 	var result = &client.OrganizationResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_organization.getOrganization", "request_error", err)
+		plugin.Logger(ctx).Error("make_organization.getOrganization", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "organizations:read")
 	}
 
@@ -69,19 +66,17 @@ func getOrganization(_ context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 }
 
 func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listOrganizations", d, h)
-
-	var logger = utils.GetLogger()
+	LogQueryContext("listOrganizations", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
 	// prepare params
 	var config = client.NewRequestConfig("organizations")
-	utils.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
+	ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 	if d.QueryContext.Limit != nil {
 		config.Pagination.Limit = int(*d.QueryContext.Limit)
 	}
@@ -92,7 +87,7 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		var result = &client.OrganizationListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_organization.listOrganizations", "request_error", err)
+			plugin.Logger(ctx).Error("make_organization.listOrganizations", "request_error", err)
 			return nil, c.HandleKnownErrors(err, "organizations:read")
 		}
 

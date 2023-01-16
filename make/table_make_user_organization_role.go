@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -28,18 +27,16 @@ func tableUserOrganizationRole(_ context.Context) *plugin.Table {
 			{Name: "invitation", Type: proto.ColumnType_STRING, Description: "Is the invitation is still pending?"},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 		},
 	}
 }
 
 func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listUserOrganizationRoles", d, h)
-
-	var logger = utils.GetLogger()
+	LogQueryContext("listUserOrganizationRoles", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +54,7 @@ func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plug
 		var result = &client.UserOrganizationRoleListResponse{}
 		err = c.Get(&config, result)
 		if err != nil {
-			logger.Error("make_user_organization_role.listUserOrganizationRoles", "request_error", err)
+			plugin.Logger(ctx).Error("make_user_organization_role.listUserOrganizationRoles", "request_error", err)
 			return nil, c.HandleKnownErrors(err, "user:read")
 		}
 

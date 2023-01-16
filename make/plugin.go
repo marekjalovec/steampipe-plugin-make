@@ -9,7 +9,6 @@ package make
 import (
 	"context"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
@@ -39,8 +38,6 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"make_data_store":             tableDataStore(ctx),
 		},
 	}
-
-	utils.CreateLogger(ctx)
 
 	return p
 }

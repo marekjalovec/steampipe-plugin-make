@@ -3,7 +3,6 @@ package make
 import (
 	"context"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -24,18 +23,16 @@ func tableApiToken(_ context.Context) *plugin.Table {
 			{Name: "created", Type: proto.ColumnType_TIMESTAMP, Description: "Can ths role be used on the Organization, or Team level?"},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Label")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Label")},
 		},
 	}
 }
 
 func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listApiTokens", d, h)
-
-	var logger = utils.GetLogger()
+	LogQueryContext("listApiTokens", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +47,7 @@ func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	var result = &client.ApiTokenListResponse{}
 	err = c.Get(&config, result)
 	if err != nil {
-		logger.Error("make_api_token.listApiTokens", "request_error", err)
+		plugin.Logger(ctx).Error("make_api_token.listApiTokens", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "user:read")
 	}
 

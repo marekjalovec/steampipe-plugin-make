@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/marekjalovec/steampipe-plugin-make/client"
-	"github.com/marekjalovec/steampipe-plugin-make/make/utils"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
@@ -36,18 +35,16 @@ func tableDataStore(_ context.Context) *plugin.Table {
 			{Name: "datastructure_id", Type: proto.ColumnType_INT, Description: "No idea at this point, sorry."},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: utils.StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
 		},
 	}
 }
 
-func getDataStore(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("getDataStore", d, h)
-
-	var logger = utils.GetLogger()
+func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	LogQueryContext("getDataStore", ctx, d, h)
 
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +52,13 @@ func getDataStore(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	// prepare params
 	var id = int(d.KeyColumnQuals["id"].GetInt64Value())
 	var config = client.NewRequestConfig(fmt.Sprintf(`data-stores/%d`, id))
-	utils.ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
+	ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
 
 	// fetch data
 	var result = &client.DataStoreResponse{}
 	err = c.Get(&config, &result)
 	if err != nil {
-		logger.Error("make_data_store.getDataStore", "request_error", err)
+		plugin.Logger(ctx).Error("make_data_store.getDataStore", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "datastores:read")
 	}
 
@@ -69,16 +66,14 @@ func getDataStore(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 }
 
 func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	utils.LogQueryContext("listDataStores", d, h)
+	LogQueryContext("listDataStores", ctx, d, h)
 
 	if h.Item == nil {
 		return nil, fmt.Errorf("parent organization not defined")
 	}
 
-	var logger = utils.GetLogger()
-
 	// create new Make client
-	c, err := client.GetClient(d.Connection)
+	c, err := client.GetClient(ctx, d.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +83,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	for _, team := range teams {
 		// prepare params
 		var config = client.NewRequestConfig("data-stores")
-		utils.ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
+		ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
 		config.Params.Set("teamId", strconv.Itoa(team.Id))
 		if d.QueryContext.Limit != nil {
 			config.Pagination.Limit = int(*d.QueryContext.Limit)
@@ -100,7 +95,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 			var result = &client.DataStoreListResponse{}
 			err = c.Get(&config, result)
 			if err != nil {
-				logger.Error("make_data_store.listDataStores", "request_error", err)
+				plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
 				return nil, c.HandleKnownErrors(err, "datastores:read")
 			}
 
