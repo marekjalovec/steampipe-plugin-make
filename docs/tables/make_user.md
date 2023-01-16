@@ -2,11 +2,11 @@
 
 Existing Users within your account, and their attributes.
 
-## Key columns
+### Key columns
 - Provide a numeric `id` if you want to query for a specific User.
 - Provide a numeric `organization_id`, or `team_id` to query Users for a specific Organization, or a Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table. 
 
-## Caveat
+### Caveat
 - Thanks to the structure of the Make API, Users can appear in the response multiple times if you query this table. Use `distinct`, or `group by` to get unique records.
 
 ## Examples
@@ -15,50 +15,51 @@ Existing Users within your account, and their attributes.
 
 ```sql
 select distinct
-    u.id,
-    u.name
-from make_user u 
-order by u.name
-```
-
-```
-+------+----------------+
-| id   | name           |
-+------+----------------+
-| 1    | Marty McFly    |
-| 2    | Biff Tannen    |
-| 3    | Linda McFly    |
-| 4    | Dave McFly     |
-| 5    | Mr. Strickland |
-+------+----------------+
+  id,
+  name 
+from
+  make_user 
+order by
+  name
 ```
 
 ### List of all Users in an Organization, or a Team
 
 ```sql
 -- organization
-select distinct 
-    u.id,
-    u.name
-from make_user u
-where u.organization_id = 1
-order by u.name
+select distinct
+  id,
+  name 
+from
+  make_user
+where
+  organization_id = 1 
+order by
+  name
 
 -- team
 select distinct
-    u.id,
-    u.name
-from make_user u
-where u.team_id = 1
-order by u.name
+  id,
+  name 
+from
+  make_user 
+where
+  team_id = 1 
+order by
+  name
 ```
 
-```
-+------+----------------+
-| id   | name           |
-+------+----------------+
-| 1    | Marty McFly    |
-| 3    | Linda McFly    |
-| 4    | Dave McFly     |
-+------+----------------+
+### List of all Users who logged in the last 30 days
+
+```sql
+select distinct
+  id,
+  name,
+  last_login
+from
+  make_user
+where
+  last_login > now() - interval '30 days'
+order by
+  name
 ```
