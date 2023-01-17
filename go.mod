@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/google/uuid v1.1.2
-	github.com/hashicorp/go-hclog v1.2.2
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.0.2
+	github.com/hashicorp/go-hclog v1.4.0
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.1.0
 )
 
 require (
@@ -68,7 +68,7 @@ require (
 	github.com/prometheus/common v0.33.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/sethvargo/go-retry v0.1.0 // indirect
+	github.com/sethvargo/go-retry v0.2.4 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/stevenle/topsort v0.0.0-20130922064739-8130c1d7596b // indirect

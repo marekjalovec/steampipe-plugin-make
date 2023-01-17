@@ -37,7 +37,7 @@ func tableConnection(_ context.Context) *plugin.Table {
 			{Name: "metadata", Type: proto.ColumnType_JSON, Description: "Metadata attached to the Connection."},
 			{Name: "upgradeable", Type: proto.ColumnType_BOOL, Description: "Can the Connection be upgraded?"},
 			{Name: "scoped", Type: proto.ColumnType_BOOL, Description: "Is the Connection scoped?"},
-			{Name: "scopes", Type: proto.ColumnType_JSON, Description: "Security scopes of the Connection.", Hydrate: getConnection},
+			{Name: "scopes", Type: proto.ColumnType_JSON, Description: "Security scopes of the Connection.", Hydrate: getConnection, Transform: transform.FromField("Scopes").NullIfEmptySlice()},
 			{Name: "editable", Type: proto.ColumnType_BOOL, Description: "Can the Connection be edited?"},
 			{Name: "uid", Type: proto.ColumnType_STRING, Description: "UID of this Connection."},
 
