@@ -54,7 +54,7 @@ make
 Configure the plugin:
 
 ```
-cp config/* ~/.steampipe/config
+cp config/make.spc ~/.steampipe/config
 vi ~/.steampipe/config/make.spc
 ```
 
@@ -64,15 +64,7 @@ Increase logging level (optional, but very helpful when debugging)
 export STEAMPIPE_LOG_LEVEL=INFO
 ```
 
-5] Try it!
-
-```
-steampipe query
-> .inspect make
-> select id, name from make_connection
-```
-
-6] Further reading:
+Further reading:
 
 - [Make API documentation](https://www.make.com/en/api-documentation)
 - [Writing plugins](https://steampipe.io/docs/develop/writing-plugins)
