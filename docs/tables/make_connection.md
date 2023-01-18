@@ -17,23 +17,23 @@ For most apps included in Make, it is necessary to create a connection, through 
 select
   o.name as organization_name,
   t.name as team_name,
-  c.name as connection_name 
+  c.name as connection_name
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_connection c 
-    on c.team_id = t.id
+    make_connection c
+    on c.team_id = t.id;
 
 -- or a simplified version
 
 select
   id,
-  name 
+  name
 from
-  make_connection
+  make_connection;
 ```
 
 ### List of all Connections for a particular Make App
@@ -43,26 +43,26 @@ from
 select
   o.name as organization_name,
   t.name as team_name,
-  c.name as connection_name 
+  c.name as connection_name
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_connection c 
-    on c.team_id = t.id 
+    make_connection c
+    on c.team_id = t.id
 where
-  c.account_name = 'amazon-lambda'
+  c.account_name = 'amazon-lambda';
 
 -- or a simplified version with own columns only
 select
   id,
-  name 
+  name
 from
   make_connection
 where
-  account_name = 'amazon-lambda'
+  account_name = 'amazon-lambda';
 ```
 
 ### List of all Connections owned by a specific Team
@@ -70,11 +70,11 @@ where
 ```sql
 select
   id,
-  name 
+  name
 from
-  make_connection 
+  make_connection
 where
-  team_id = 1
+  team_id = 1;
 ```
 
 ### List of all Connections owned by a specific User
@@ -85,15 +85,15 @@ select
    c.id,
    c.name,
    c.account_label,
-   c.expire 
+   c.expire
 from
-   make_connection c 
+   make_connection c
    join
-      make_team t 
-      on t.id = c.team_id 
+      make_team t
+      on t.id = c.team_id
 where
-   c.metadata ->> 'type' = 'email' 
-   and c.metadata ->> 'value' = 'marty@mcfly.family'
+   c.metadata ->> 'type' = 'email'
+   and c.metadata ->> 'value' = 'marty@mcfly.family';
 ```
 
 ### Detail of a Connection
@@ -113,9 +113,9 @@ select
   scoped,
   scopes,
   editable,
-  uid 
+  uid
 from
-  make_connection 
+  make_connection
 where
-  id = 1
+  id = 1;
 ```

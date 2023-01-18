@@ -15,9 +15,9 @@ select
   name,
   subsidiary,
   category,
-  permissions 
+  permissions
 from
-  make_user_role
+  make_user_role;
 ```
 
 ### List of all Admins in the account
@@ -25,17 +25,17 @@ from
 ```sql
 select distinct
    u.name as user_name,
-   o.name as organization_name 
+   o.name as organization_name
 from
-   make_user u 
+   make_user u
    inner join
-      make_user_organization_role uor 
-      on uor.user_id = u.id 
+      make_user_organization_role uor
+      on uor.user_id = u.id
    join
-      make_organization o 
-      on o.id = uor.organization_id 
+      make_organization o
+      on o.id = uor.organization_id
 where
-   uor.users_role_id = 12
+   uor.users_role_id = 12;
 ```
 
 ### List access for a specific User
@@ -46,38 +46,38 @@ select distinct
   u.name as user_name,
   o.name as organization_name,
   ur.name as role_name,
-  ur.permissions 
+  ur.permissions
 from
-  make_user_organization_role uor 
+  make_user_organization_role uor
   join
-    make_organization o 
-    on o.id = uor.organization_id 
+    make_organization o
+    on o.id = uor.organization_id
   join
-    make_user u 
-    on u.id = uor.user_id 
+    make_user u
+    on u.id = uor.user_id
   join
-    make_user_role ur 
-    on ur.id = uor.users_role_id 
+    make_user_role ur
+    on ur.id = uor.users_role_id
 where
-  uor.user_id = 1
+  uor.user_id = 1;
 
 -- team
 select distinct
   u.name as user_name,
   t.name as team_name,
   ur.name as role_name,
-  ur.permissions 
+  ur.permissions
 from
-  make_user_team_role utr 
+  make_user_team_role utr
   join
-    make_team t 
-    on t.id = utr.team_id 
+    make_team t
+    on t.id = utr.team_id
   join
-    make_user u 
-    on u.id = utr.user_id 
+    make_user u
+    on u.id = utr.user_id
   join
-    make_user_role ur 
-    on ur.id = utr.users_role_id 
+    make_user_role ur
+    on ur.id = utr.users_role_id
 where
-  utr.user_id = 1
+  utr.user_id = 1;
 ```
