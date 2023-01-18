@@ -14,23 +14,23 @@ Teams are containers that contain scenarios and data accessible only by the memb
 -- with Organization name embedded
 select
   t.id,
-  o.name || ' -> ' || t.name as name 
+  o.name || ' -> ' || t.name as name
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
 order by
-  name
+  name;
 
 -- or a simplified version with own columns only
 select
   id,
-  name 
+  name
 from
   make_team
 order by
-  name
+  name;
 ```
 
 ### List of all Teams in an Organization
@@ -38,13 +38,13 @@ order by
 ```sql
 select
   id,
-  name 
-from
-  make_team 
-where
-  organization_id = 1 
-order by
   name
+from
+  make_team
+where
+  organization_id = 1
+order by
+  name;
 ```
 
 ### Detail of a Team
@@ -53,9 +53,9 @@ order by
 select
   id,
   name,
-  organization_id 
+  organization_id
 from
-  make_team 
+  make_team
 where
-  id = 1
+  id = 1;
 ```

@@ -14,17 +14,17 @@ select
   o.name organization_name,
   t.name team_name,
   tv.name variable_name,
-  tv.value variable_value 
+  tv.value variable_value
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_team_variable tv 
-    on tv.team_id = t.id 
+    make_team_variable tv
+    on tv.team_id = t.id
 where
-  tv.is_system = false
+  tv.is_system = false;
 ```
 
 ### List of all Bearer tokens
@@ -34,16 +34,16 @@ select
   o.name organization_name,
   t.name team_name,
   tv.name variable_name,
-  tv.value variable_value 
+  tv.value variable_value
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_team_variable tv 
-    on tv.team_id = t.id 
+    make_team_variable tv
+    on tv.team_id = t.id
 where
   tv.is_system = false
-  and tv.value like 'Bearer %'
+  and tv.value like 'Bearer %';
 ```

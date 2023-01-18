@@ -12,9 +12,9 @@ Organizations are main containers that contain all teams, scenarios, and users.
 ```sql
 select
   id,
-  name 
+  name
 from
-  make_organization 
+  make_organization
 order by
   name
 ```
@@ -31,9 +31,9 @@ select
   zone,
   service_name,
   is_paused,
-  external_id 
+  external_id
 from
-  make_organization 
+  make_organization
 where
-  id = 1
+  id = 1;
 ```

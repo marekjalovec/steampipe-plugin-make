@@ -13,14 +13,14 @@ Organization Variables are user-set variables you can use in your scenarios.
 select
   o.name organization_name,
   ov.name variable_name,
-  ov.value variable_value 
+  ov.value variable_value
 from
-  make_organization o 
+  make_organization o
   join
-    make_organization_variable ov 
-    on ov.organization_id = o.id 
+    make_organization_variable ov
+    on ov.organization_id = o.id
 where
-  ov.is_system = false
+  ov.is_system = false;
 ```
 
 ### List of all API endpoints

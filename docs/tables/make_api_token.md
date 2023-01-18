@@ -11,7 +11,7 @@ select
   token,
   label,
   scope,
-  created 
+  created
 from
-  make_api_token
+  make_api_token;
 ```

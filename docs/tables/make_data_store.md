@@ -14,23 +14,23 @@ Data Stores are used to store data from scenarios or for transferring data in be
 select
   o.name as organization_name,
   t.name as team_name,
-  ds.name as data_store_name 
+  ds.name as data_store_name
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_data_store ds 
+    make_data_store ds
     on ds.team_id = t.id
 
 -- or a simplified version
 
 select
   id,
-  name 
+  name
 from
-  make_data_store
+  make_data_store;
 ```
 
 ### List of all Data Stores including data quota usage
@@ -40,17 +40,17 @@ select
   o.name as organization_name,
   t.name as team_name,
   ds.name as data_store_name,
-  round(100.0 / max_size * size, 2) as ds_fill_perc 
+  round(100.0 / max_size * size, 2) as ds_fill_perc
 from
-  make_organization o 
+  make_organization o
   join
-    make_team t 
-    on t.organization_id = o.id 
+    make_team t
+    on t.organization_id = o.id
   join
-    make_data_store ds 
-    on ds.team_id = t.id 
+    make_data_store ds
+    on ds.team_id = t.id
 order by
-  ds_fill_perc desc
+  ds_fill_perc desc;
 ```
 
 ### Usage of Data Store quota for the whole account
@@ -62,18 +62,18 @@ select
   o.license ->> 'dslimit' dslimit,
   round(100.0 / cast(o.license ->> 'dslimit' as int) * count(ds.id), 2) as usage_perc 
 from
-  make_data_store ds 
+  make_data_store ds
   join
-    make_team t 
-    on t.id = ds.team_id 
+    make_team t
+    on t.id = ds.team_id
   join
-    make_organization o 
-    on o.id = t.organization_id 
+    make_organization o
+    on o.id = t.organization_id
 group by
   o.name,
-  o.license 
+  o.license
 order by
-  org_name
+  org_name;
 ```
 
 ### Detail of a Data Store
@@ -85,9 +85,9 @@ select
   records,
   size,
   max_size,
-  datastructure_id 
+  datastructure_id
 from
-  make_data_store 
+  make_data_store
 where
-  id = 1
+  id = 1;
 ```
