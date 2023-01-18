@@ -5,17 +5,14 @@ icon_url: "/images/plugins/marekjalovec/make.svg"
 brand_color: "#6D01CC"
 display_name: "Make"
 short_name: "make"
-description: "Make.com plugin for exploring your automations in depth."
-og_description: "Query Make.com with SQL! Open source CLI. No DB required."
+description: "Make plugin for exploring your automations in depth."
+og_description: "Query Make with SQL! Open source CLI. No DB required."
 og_image: "/images/plugins/marekjalovec/make-social-graphic.png"
 ---
 
-# Make.com + Steampipe
+# Make + Steampipe
 
-[Make.com](https://www.make.com) allows you to work with everything from tasks and workflows to apps and systems, to build and automate anything in one powerful visual platform.
-
-✓ No credit card required  
-✓ No time limit on Free plan
+[Make](https://www.make.com) allows you to work with everything from tasks and workflows to apps and systems, to build and automate anything in one powerful visual platform.
 
 [Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
 
@@ -28,7 +25,7 @@ select distinct
   email,
   last_login
 from
-  make_user
+  make_user;
 ```
 
 ```
@@ -54,12 +51,20 @@ from
 Download and install the latest Make.com plugin:
 
 ```bash
-steampipe plugin install make
+steampipe plugin install marekjalovec/make
 ```
+
+### Credentials
+
+| Item | Description |
+| - | - |
+| Credentials | [Get your API token](https://www.make.com/en/api-documentation/authentication-token). |
+| Resolution | Credentials explicitly set in a steampipe config file (`~/.steampipe/config/make.spc`). |
 
 ### Configuration
 
 Installing the latest Make.com plugin will create a config file (`~/.steampipe/config/make.spc`) with a single connection named `make`:
+
 ```hcl
 connection "make" {
   plugin = "marekjalovec/make"
@@ -92,5 +97,5 @@ connection "make" {
 
 ## Get involved
 
-* Open source: https://github.com/marekjalovec/steampipe-plugin-make
-* Community: [Slack Channel](https://steampipe.io/community/join)
+- Open source: https://github.com/marekjalovec/steampipe-plugin-make
+- Community: [Slack Channel](https://steampipe.io/community/join)
