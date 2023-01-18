@@ -1,16 +1,35 @@
-![Steampipe + Make.com](docs/make-social-graphic.png)
+![image](https://hub.steampipe.io/images/plugins/marekjalovec/make-social-graphic.png)
 
-# [Make.com](https://www.make.com/en) Plugin for [Steampipe](https://steampipe.io)
+# Make plugin for Steampipe
 
 Use SQL to query your Make Scenarios, Connections, Variables, Users, and more.
 
-- Plugin documentation: [Table definitions & examples](https://github.com/marekjalovec/steampipe-plugin-make/tree/main/docs/tables)
-- Steampipe Community: [Slack Channel](https://steampipe.io/community/join)
+- **[Get started ->](https://hub.steampipe.io/plugins/marekjalovec/make)**
+- Documentation: [Table definitions & examples](https://hub.steampipe.io/plugins/marekjalovec/make/tables)
+- Community: [Slack Channel](https://steampipe.io/community/join)
 - Get involved: [Issues](https://github.com/marekjalovec/steampipe-plugin-make/issues)
 
 ## Quick start
 
-The plugin isn't published yet, follow the **Developing** section for installing the plugin.
+Install the plugin with [Steampipe](https://steampipe.io):
+
+```shell
+steampipe plugin install marekjalovec/make
+```
+
+Configure your [credentials](https://hub.steampipe.io/plugins/marekjalovec/make#credentials) and [config file](https://hub.steampipe.io/plugins/marekjalovec/make#configuration).
+
+Run a query:
+
+```sql
+select
+  distinct id,
+  name,
+  email,
+  last_login
+from
+  make_user;
+```
 
 ## Developing
 
@@ -19,27 +38,27 @@ Prerequisites:
 - [Steampipe](https://steampipe.io/downloads)
 - [Golang](https://golang.org/doc/install)
 
-1] Clone:
+Clone:
 
 ```sh
 git clone https://github.com/marekjalovec/steampipe-plugin-make
 cd steampipe-plugin-make
 ```
 
-2] Build, which automatically installs the new version to your `~/.steampipe/plugins` directory:
+Build, which automatically installs the new version to your `~/.steampipe/plugins` directory:
 
 ```
 make
 ```
 
-3] Configure the plugin:
+Configure the plugin:
 
 ```
 cp config/* ~/.steampipe/config
 vi ~/.steampipe/config/make.spc
 ```
 
-4] Increase logging level (optional, but very helpful when debugging)
+Increase logging level (optional, but very helpful when debugging)
 
 ```
 export STEAMPIPE_LOG_LEVEL=INFO
@@ -50,13 +69,12 @@ export STEAMPIPE_LOG_LEVEL=INFO
 ```
 steampipe query
 > .inspect make
-> select c.id, c.name from make_connection c
+> select id, name from make_connection
 ```
 
 6] Further reading:
 
 - [Make API documentation](https://www.make.com/en/api-documentation)
-- [Table definitions & examples](https://github.com/marekjalovec/steampipe-plugin-make/tree/main/docs/tables)
 - [Writing plugins](https://steampipe.io/docs/develop/writing-plugins)
 - [Writing your first table](https://steampipe.io/docs/develop/writing-your-first-table)
 
