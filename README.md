@@ -54,7 +54,7 @@ make
 Configure the plugin:
 
 ```
-cp config/make.spc ~/.steampipe/config
+cp config/make.spc ~/.steampipe/config/
 vi ~/.steampipe/config/make.spc
 ```
 

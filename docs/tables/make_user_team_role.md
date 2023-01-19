@@ -7,4 +7,25 @@ Assigned User Roles with a Team.
 
 ## Examples
 
-See [make_user_role](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_user_role.md) for examples how to use this table.
+### List access roles for a specific User
+
+```sql
+select distinct
+  u.name as user_name,
+  t.name as team_name,
+  ur.name as role_name,
+  ur.permissions
+from
+  make_user_team_role utr
+  join
+    make_team t
+    on t.id = utr.team_id
+  join
+    make_user u
+    on u.id = utr.user_id
+  join
+    make_user_role ur
+    on ur.id = utr.users_role_id
+where
+  utr.user_id = 1;
+```
