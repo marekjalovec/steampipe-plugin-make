@@ -21,6 +21,7 @@ func tableApiToken(_ context.Context) *plugin.Table {
 			{Name: "label", Type: proto.ColumnType_STRING, Description: "The friendly name of the API Token."},
 			{Name: "scope", Type: proto.ColumnType_JSON, Description: "Scopes enabled for the API Token."},
 			{Name: "created", Type: proto.ColumnType_TIMESTAMP, Description: "Creation date of the API Token."},
+			{Name: "is_active", Type: proto.ColumnType_BOOL, Description: "Is this the API Token used in make.spc?"},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Label")},
@@ -53,6 +54,7 @@ func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 
 	// stream results
 	for _, i := range result.ApiTokens {
+		i.IsActive = c.IsTokenActive(i.Token)
 		d.StreamListItem(ctx, i)
 	}
 

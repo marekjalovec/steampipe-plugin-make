@@ -43,10 +43,11 @@ const (
 
 // ApiToken //
 type ApiToken struct {
-	Token   string   `json:"token"`
-	Label   string   `json:"label"`
-	Scope   []string `json:"scope"`
-	Created string   `json:"created"`
+	Token    string   `json:"token"`
+	Label    string   `json:"label"`
+	Scope    []string `json:"scope"`
+	Created  string   `json:"created"`
+	IsActive bool
 }
 
 type ApiTokenListResponse struct {

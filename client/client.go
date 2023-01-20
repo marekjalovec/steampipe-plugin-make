@@ -158,12 +158,16 @@ func (at *Client) loadScopes() {
 	err := at.Get(&config, result)
 	if err == nil {
 		for _, token := range result.ApiTokens {
-			var parts = strings.Split(token.Token, "-")
-			if len(parts) > 0 && strings.HasPrefix(at.apiToken, parts[0]) {
+			if at.IsTokenActive(token.Token) {
 				at.scopes = &token.Scope
 			}
 		}
 	}
+}
+
+func (at *Client) IsTokenActive(maskedToken string) bool {
+	var parts = strings.Split(maskedToken, "-")
+	return len(parts) > 0 && strings.HasPrefix(at.apiToken, parts[0])
 }
 
 func (at *Client) scopesLoaded() bool {

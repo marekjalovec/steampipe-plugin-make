@@ -29,3 +29,4 @@ node_modules
 
 # Build output
 steampipe-plugin-make
+dist/

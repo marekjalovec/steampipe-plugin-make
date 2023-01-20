@@ -1,3 +1,10 @@
+## v0.2.0 [TBD]
+
+_Enhancements_
+
+  - Added column `is_active` to table `make_api_token`.
+
+
 ## v0.1.0 [2023-01-19]
 
 _What's new?_
