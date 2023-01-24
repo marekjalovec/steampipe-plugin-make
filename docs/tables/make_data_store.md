@@ -22,7 +22,7 @@ from
     on t.organization_id = o.id
   join
     make_data_store ds
-    on ds.team_id = t.id
+    on ds.team_id = t.id;
 
 -- or a simplified version
 

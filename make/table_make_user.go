@@ -20,7 +20,7 @@ func tableUser(_ context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The user ID."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Full name of the User."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the User."},
 			{Name: "email", Type: proto.ColumnType_STRING, Description: "User's email."},
 			{Name: "language", Type: proto.ColumnType_STRING, Description: "Environment language."},
 			{Name: "locale_id", Type: proto.ColumnType_INT, Description: "Environment locale - date and hour formats, decimal separators etc."},

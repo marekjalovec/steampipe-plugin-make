@@ -23,7 +23,7 @@ func tableUserTeamRole(_ context.Context) *plugin.Table {
 			// Other Columns
 			{Name: "users_role_id", Type: proto.ColumnType_INT, Description: "ID of the Role."},
 			{Name: "team_id", Type: proto.ColumnType_INT, Description: "The ID of the Team."},
-			{Name: "changeable", Type: proto.ColumnType_BOOL, Description: "Can this Role be changed?"},
+			{Name: "changeable", Type: proto.ColumnType_BOOL, Description: "Can the Role be changed?"},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},

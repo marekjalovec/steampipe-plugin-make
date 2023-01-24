@@ -35,5 +35,5 @@ from
       make_organization o
       on o.id = uor.organization_id
 where
-   uor.users_role_id = 12;
+   uor.users_role_id = 1;
 ```
