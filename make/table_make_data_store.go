@@ -29,7 +29,7 @@ func tableDataStore(_ context.Context) *plugin.Table {
 			{Name: "records", Type: proto.ColumnType_INT, Description: "Number of records in the Data Store."},
 			{Name: "size", Type: proto.ColumnType_INT, Description: "The current size of the data in the Data Store."},
 			{Name: "max_size", Type: proto.ColumnType_INT, Description: "The maximum size of the data that the Data Store can store."},
-			{Name: "datastructure_id", Type: proto.ColumnType_INT, Description: "Data structure ID."},
+			{Name: "datastructure_id", Type: proto.ColumnType_INT, Description: "Data structure ID.", Hydrate: getDataStore},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
