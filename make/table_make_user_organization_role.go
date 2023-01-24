@@ -24,6 +24,7 @@ func tableUserOrganizationRole(_ context.Context) *plugin.Table {
 			{Name: "users_role_id", Type: proto.ColumnType_INT, Description: "The ID of the Role."},
 			{Name: "organization_id", Type: proto.ColumnType_INT, Description: "The ID of the Organization."},
 			{Name: "invitation", Type: proto.ColumnType_STRING, Description: "Is the invitation is still pending?"},
+			{Name: "sso_pending", Type: proto.ColumnType_BOOL, Description: "Is SSO pending?"},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
