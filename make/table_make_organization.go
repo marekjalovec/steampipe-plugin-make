@@ -3,7 +3,7 @@ package make
 import (
 	"context"
 	"fmt"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
+	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -43,20 +43,19 @@ func tableOrganization(_ context.Context) *plugin.Table {
 func getOrganization(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("getOrganization", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
 	// prepare params
 	var id = int(d.EqualsQuals["id"].GetInt64Value())
-	var config = client.NewRequestConfig(fmt.Sprintf(`organizations/%d`, id))
-	ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
+	var config = makesdk.NewRequestConfig(fmt.Sprintf(`organizations/%d`, id))
+	makesdk.ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
 
 	// fetch data
-	var result = &client.OrganizationResponse{}
-	err = c.Get(&config, &result)
+	var result = &makesdk.OrganizationResponse{}
+	err = c.Get(config, &result)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_organization.getOrganization", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "organizations:read")
@@ -68,40 +67,26 @@ func getOrganization(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listOrganizations", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// prepare params
-	var config = client.NewRequestConfig("organizations")
-	ColumnsToParams(&config.Params, []string{"id", "name", "countryId", "timezoneId", "license", "zone", "serviceName", "isPaused", "externalId", "teams"})
-	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = int(*d.QueryContext.Limit)
-	}
-
-	// fetch data
-	var pagesLeft = true
-	for pagesLeft {
-		var result = &client.OrganizationListResponse{}
-		err = c.Get(&config, result)
+	var op = makesdk.NewOrganizationListPaginator(c, int(d.RowsRemaining(ctx)))
+	for op.HasMorePages() {
+		organizations, err := op.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_organization.listOrganizations", "request_error", err)
-			return nil, c.HandleKnownErrors(err, "organizations:read")
+			return nil, err
 		}
 
 		// stream results
-		for _, i := range result.Organizations {
+		for _, i := range organizations {
 			d.StreamListItem(ctx, i)
-		}
 
-		// pagination
-		var resultCount = len(result.Organizations)
-		if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
-			pagesLeft = false
-		} else {
-			config.Pagination.Offset += config.Pagination.Limit
+			if d.RowsRemaining(ctx) <= 0 {
+				return nil, nil
+			}
 		}
 	}
 

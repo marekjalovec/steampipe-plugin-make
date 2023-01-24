@@ -3,8 +3,7 @@ module github.com/marekjalovec/steampipe-plugin-make
 go 1.19
 
 require (
-	github.com/google/uuid v1.1.2
-	github.com/hashicorp/go-hclog v1.4.0
+	github.com/marekjalovec/make-sdk v0.0.0-unpublished
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.1.0
 )
 
@@ -38,10 +37,12 @@ require (
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-getter v1.6.2 // indirect
+	github.com/hashicorp/go-hclog v1.4.0 // indirect
 	github.com/hashicorp/go-plugin v1.4.6 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
