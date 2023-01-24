@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -39,7 +38,7 @@ func listUserRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var up = makesdk.NewUserRoleListPaginator(c, int(d.RowsRemaining(ctx)))
+	var up = c.NewUserRoleListPaginator(int(d.RowsRemaining(ctx)))
 	for up.HasMorePages() {
 		userRoles, err := up.NextPage()
 		if err != nil {

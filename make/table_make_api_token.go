@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -37,7 +36,7 @@ func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var op = makesdk.NewApiTokenListPaginator(c, int(d.RowsRemaining(ctx)))
+	var op = c.NewApiTokenListPaginator(int(d.RowsRemaining(ctx)))
 	for op.HasMorePages() {
 		tokens, err := op.NextPage()
 		if err != nil {

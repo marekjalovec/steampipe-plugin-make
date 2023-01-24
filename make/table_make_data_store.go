@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"fmt"
 	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -46,20 +45,19 @@ func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		return nil, err
 	}
 
-	// prepare params
-	var id = int(d.EqualsQuals["id"].GetInt64Value())
-	var config = makesdk.NewRequestConfig(fmt.Sprintf(`data-stores/%d`, id))
-	makesdk.ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
-
-	// fetch data
-	var result = &makesdk.DataStoreResponse{}
-	err = c.Get(config, &result)
+	var id int
+	if h.Item != nil {
+		id = h.Item.(makesdk.DataStore).Id
+	} else {
+		id = int(d.EqualsQuals["id"].GetInt64Value())
+	}
+	team, err := c.GetDataStore(id)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_data_store.getDataStore", "request_error", err)
-		return nil, c.HandleKnownErrors(err, "datastores:read")
+		return nil, err
 	}
 
-	return result.DataStore, nil
+	return team, nil
 }
 
 func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -70,7 +68,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -80,7 +78,7 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = makesdk.NewDataStoreListPaginator(c, int(d.RowsRemaining(ctx)), team.Id)
+				var up = c.NewDataStoreListPaginator(int(d.RowsRemaining(ctx)), team.Id)
 				for up.HasMorePages() {
 					dataStores, err := up.NextPage()
 					if err != nil {

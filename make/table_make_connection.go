@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"fmt"
 	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -53,26 +52,19 @@ func getConnection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	// prepare params
 	var id int
 	if h.Item != nil {
-		// "scopes" column detail request
 		id = h.Item.(makesdk.Connection).Id
 	} else {
-		// direct query
 		id = int(d.EqualsQuals["id"].GetInt64Value())
 	}
-	var config = makesdk.NewRequestConfig(fmt.Sprintf(`connections/%d`, id))
-
-	// fetch data
-	var result = &makesdk.ConnectionResponse{}
-	err = c.Get(config, &result)
+	team, err := c.GetConnection(id)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_connection.getConnection", "request_error", err)
-		return nil, c.HandleKnownErrors(err, "connections:read")
+		return nil, err
 	}
 
-	return result.Connection, nil
+	return team, nil
 }
 
 func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -83,7 +75,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -93,7 +85,7 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var cp = makesdk.NewConnectionListPaginator(c, int(d.RowsRemaining(ctx)), team.Id)
+				var cp = c.NewConnectionListPaginator(int(d.RowsRemaining(ctx)), team.Id)
 				for cp.HasMorePages() {
 					connections, err := cp.NextPage()
 					if err != nil {

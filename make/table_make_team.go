@@ -2,8 +2,6 @@ package make
 
 import (
 	"context"
-	"fmt"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -41,20 +39,13 @@ func getTeam(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 		return nil, err
 	}
 
-	// prepare params
-	var id = int(d.EqualsQuals["id"].GetInt64Value())
-	var config = makesdk.NewRequestConfig(fmt.Sprintf(`teams/%d`, id))
-	makesdk.ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
-
-	// fetch data
-	var result = &makesdk.TeamResponse{}
-	err = c.Get(config, &result)
+	team, err := c.GetTeam(int(d.EqualsQuals["id"].GetInt64Value()))
 	if err != nil {
 		plugin.Logger(ctx).Error("make_team.getTeam", "request_error", err)
-		return nil, c.HandleKnownErrors(err, "teams:read")
+		return nil, err
 	}
 
-	return result.Team, nil
+	return team, nil
 }
 
 func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -65,7 +56,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -74,7 +65,7 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		}
 
 		for _, organization := range organizations {
-			var up = makesdk.NewTeamListPaginator(c, int(d.RowsRemaining(ctx)), organization.Id)
+			var up = c.NewTeamListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
 			for up.HasMorePages() {
 				teams, err := up.NextPage()
 				if err != nil {

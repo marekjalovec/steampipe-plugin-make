@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -39,7 +38,7 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -49,7 +48,7 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = makesdk.NewTeamVariableListPaginator(c, int(d.RowsRemaining(ctx)), team.Id)
+				var up = c.NewTeamVariableListPaginator(int(d.RowsRemaining(ctx)), team.Id)
 				for up.HasMorePages() {
 					teamVariables, err := up.NextPage()
 					if err != nil {
