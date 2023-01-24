@@ -3,6 +3,7 @@
 _Enhancements_
 
   - Added column `is_active` to table `make_api_token`.
+  - Added column `sso_pending` to table `make_user_organization_role`.
 
 
 ## v0.1.0 [2023-01-19]
