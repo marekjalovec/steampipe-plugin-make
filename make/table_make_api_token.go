@@ -2,7 +2,7 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
+	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -32,30 +32,28 @@ func tableApiToken(_ context.Context) *plugin.Table {
 func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listApiTokens", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// prepare params
-	var config = client.NewRequestConfig("users/me/api-tokens")
-	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = int(*d.QueryContext.Limit)
-	}
+	var op = makesdk.NewApiTokenListPaginator(c, int(d.RowsRemaining(ctx)))
+	for op.HasMorePages() {
+		tokens, err := op.NextPage()
+		if err != nil {
+			plugin.Logger(ctx).Error("make_api_token.listApiTokens", "request_error", err)
+			return nil, err
+		}
 
-	// fetch data
-	var result = &client.ApiTokenListResponse{}
-	err = c.Get(&config, result)
-	if err != nil {
-		plugin.Logger(ctx).Error("make_api_token.listApiTokens", "request_error", err)
-		return nil, c.HandleKnownErrors(err, "user:read")
-	}
+		// stream results
+		for _, i := range tokens {
+			i.IsActive = c.IsTokenActive(i.Token)
+			d.StreamListItem(ctx, i)
 
-	// stream results
-	for _, i := range result.ApiTokens {
-		i.IsActive = c.IsTokenActive(i.Token)
-		d.StreamListItem(ctx, i)
+			if d.RowsRemaining(ctx) <= 0 {
+				return nil, nil
+			}
+		}
 	}
 
 	return nil, nil

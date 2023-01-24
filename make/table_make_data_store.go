@@ -3,11 +3,10 @@ package make
 import (
 	"context"
 	"fmt"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
+	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"strconv"
 )
 
 func tableDataStore(_ context.Context) *plugin.Table {
@@ -15,8 +14,7 @@ func tableDataStore(_ context.Context) *plugin.Table {
 		Name:        "make_data_store",
 		Description: "Data Stores are used to store data from scenarios or for transferring data in between individual scenarios or scenario runs.",
 		List: &plugin.ListConfig{
-			Hydrate:       listDataStores,
-			ParentHydrate: listOrganizations,
+			Hydrate: listDataStores,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
@@ -43,20 +41,19 @@ func tableDataStore(_ context.Context) *plugin.Table {
 func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("getDataStore", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
 	// prepare params
 	var id = int(d.EqualsQuals["id"].GetInt64Value())
-	var config = client.NewRequestConfig(fmt.Sprintf(`data-stores/%d`, id))
-	ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
+	var config = makesdk.NewRequestConfig(fmt.Sprintf(`data-stores/%d`, id))
+	makesdk.ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
 
 	// fetch data
-	var result = &client.DataStoreResponse{}
-	err = c.Get(&config, &result)
+	var result = &makesdk.DataStoreResponse{}
+	err = c.Get(config, &result)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_data_store.getDataStore", "request_error", err)
 		return nil, c.HandleKnownErrors(err, "datastores:read")
@@ -68,53 +65,37 @@ func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listDataStores", ctx, d, h)
 
-	if h.Item == nil {
-		return nil, fmt.Errorf("parent organization not defined")
-	}
-
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// iterate over organization teams
-	var teams = h.Item.(client.Organization).Teams
-	for _, team := range teams {
-		// prepare params
-		var config = client.NewRequestConfig("data-stores")
-		ColumnsToParams(&config.Params, []string{"id", "name", "teamId", "records", "size", "maxSize", "datastructureId"})
-		config.Params.Set("teamId", strconv.Itoa(team.Id))
-		if d.QueryContext.Limit != nil {
-			config.Pagination.Limit = int(*d.QueryContext.Limit)
+	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	for op.HasMorePages() {
+		organizations, err := op.NextPage()
+		if err != nil {
+			plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
+			return nil, err
 		}
 
-		// fetch data
-		var pagesLeft = true
-		for pagesLeft {
-			var result = &client.DataStoreListResponse{}
-			err = c.Get(&config, result)
-			if err != nil {
-				plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
-				return nil, c.HandleKnownErrors(err, "datastores:read")
-			}
+		for _, organization := range organizations {
+			for _, team := range organization.Teams {
+				var up = makesdk.NewDataStoreListPaginator(c, int(d.RowsRemaining(ctx)), team.Id)
+				for up.HasMorePages() {
+					dataStores, err := up.NextPage()
+					if err != nil {
+						plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
+						return nil, err
+					}
 
-			// stream results
-			for _, i := range result.DataStores {
-				d.StreamListItem(ctx, i)
-			}
+					for _, i := range dataStores {
+						d.StreamListItem(ctx, i)
 
-			// break both cycles if we have enough rows
-			if d.RowsRemaining(ctx) <= 0 {
-				return nil, nil
-			}
-
-			// pagination
-			var resultCount = len(result.DataStores)
-			if resultCount < config.Pagination.Limit {
-				pagesLeft = false
-			} else {
-				config.Pagination.Offset += config.Pagination.Limit
+						if d.RowsRemaining(ctx) <= 0 {
+							return nil, nil
+						}
+					}
+				}
 			}
 		}
 	}

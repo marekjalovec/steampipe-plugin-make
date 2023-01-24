@@ -8,21 +8,19 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 const pluginName = "steampipe-plugin-make"
 
-// Plugin creates this (make) plugin
 func Plugin(ctx context.Context) *plugin.Plugin {
 	p := &plugin.Plugin{
 		Name:             pluginName,
 		DefaultTransform: transform.FromCamel().NullIfZero(),
 		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
-			NewInstance: client.ConfigInstance,
-			Schema:      client.ConfigSchema,
+			NewInstance: ConfigInstance,
+			Schema:      ConfigSchema,
 		},
 		TableMap: map[string]*plugin.Table{
 			"make_api_token":              tableApiToken(ctx),
