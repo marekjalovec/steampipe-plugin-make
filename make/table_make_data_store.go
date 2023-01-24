@@ -23,13 +23,13 @@ func tableDataStore(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Key Columns
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The Data Store ID."},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the Team that owns this Data Store."},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the Team that owns the Data Store."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "The user friendly name of the Data Store."},
-			{Name: "records", Type: proto.ColumnType_INT, Description: "Number of records in this Data Store."},
-			{Name: "size", Type: proto.ColumnType_INT, Description: "The current size of the data that this Data Store can store."},
-			{Name: "max_size", Type: proto.ColumnType_INT, Description: "The maximum size of the data that this Data Store can store."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Data Store."},
+			{Name: "records", Type: proto.ColumnType_INT, Description: "Number of records in the Data Store."},
+			{Name: "size", Type: proto.ColumnType_INT, Description: "The current size of the data in the Data Store."},
+			{Name: "max_size", Type: proto.ColumnType_INT, Description: "The maximum size of the data that the Data Store can store."},
 			{Name: "datastructure_id", Type: proto.ColumnType_INT, Description: "Data structure ID."},
 
 			// Standard Columns

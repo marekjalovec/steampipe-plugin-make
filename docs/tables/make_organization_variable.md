@@ -37,5 +37,5 @@ from
     on ov.organization_id = o.id 
 where
   ov.is_system = false
-  and ov.value like '%api%'
+  and ov.value like '%api%';
 ```

@@ -41,9 +41,9 @@ func StandardColumnDescription(key string) string {
 	case "tags":
 		return "A map of tags for the resource."
 	case "title":
-		return "The display name for this resource."
+		return "The display name for the resource."
 	case "virtual":
-		return "Virtual column, used to map this entity to another object."
+		return "Virtual column, used to map the entity to another object."
 	}
 	return ""
 }

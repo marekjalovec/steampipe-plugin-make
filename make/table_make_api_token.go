@@ -18,10 +18,10 @@ func tableApiToken(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Other Columns
 			{Name: "token", Type: proto.ColumnType_STRING, Description: "The API Token (masked)."},
-			{Name: "label", Type: proto.ColumnType_STRING, Description: "The friendly name of the API Token."},
+			{Name: "label", Type: proto.ColumnType_STRING, Description: "The name of the API Token."},
 			{Name: "scope", Type: proto.ColumnType_JSON, Description: "Scopes enabled for the API Token."},
 			{Name: "created", Type: proto.ColumnType_TIMESTAMP, Description: "Creation date of the API Token."},
-			{Name: "is_active", Type: proto.ColumnType_BOOL, Description: "Is this the API Token used in make.spc?"},
+			{Name: "is_active", Type: proto.ColumnType_BOOL, Description: "Is the API Token currently used in make.spc?"},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Label")},

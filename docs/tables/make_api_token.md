@@ -25,5 +25,5 @@ select
 from
   make_api_token
 where
-  is_active = true
+  is_active = true;
 ```

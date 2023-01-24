@@ -20,10 +20,10 @@ func tableUserRole(_ context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The user ID."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Full name of the Role."},
-			{Name: "subsidiary", Type: proto.ColumnType_BOOL, Description: "Is this Role defined in an Organization, or is it part of the account?"},
-			{Name: "category", Type: proto.ColumnType_STRING, Description: "Can this role be used on the Organization, or Team level?"},
-			{Name: "permissions", Type: proto.ColumnType_JSON, Description: "Permissions of the users in this Role."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Role."},
+			{Name: "subsidiary", Type: proto.ColumnType_BOOL, Description: "Is the Role defined in an Organization, or is it part of the account?"},
+			{Name: "category", Type: proto.ColumnType_STRING, Description: "Can the Role be used on the Organization, or Team level?"},
+			{Name: "permissions", Type: proto.ColumnType_JSON, Description: "Permissions of the users in the Role."},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},

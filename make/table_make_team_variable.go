@@ -18,7 +18,7 @@ func tableTeamVariable(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Team Variable."},
-			{Name: "type_id", Type: proto.ColumnType_INT, Description: "Original data type of the Team Variable. Here, all are represented as strings in the `value` column."},
+			{Name: "type_id", Type: proto.ColumnType_INT, Description: "Original data type of the Team Variable."},
 			{Name: "value", Type: proto.ColumnType_STRING, Description: "The value of the Team Variable, converted to string."},
 			{Name: "is_system", Type: proto.ColumnType_BOOL, Description: "Is the Team Variable set by Make, or by users?"},
 
