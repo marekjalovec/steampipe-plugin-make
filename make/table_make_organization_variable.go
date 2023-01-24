@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -39,7 +38,7 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -48,7 +47,7 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 		}
 
 		for _, organization := range organizations {
-			var up = makesdk.NewOrganizationVariableListPaginator(c, int(d.RowsRemaining(ctx)), organization.Id)
+			var up = c.NewOrganizationVariableListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
 			for up.HasMorePages() {
 				organizationVariables, err := up.NextPage()
 				if err != nil {

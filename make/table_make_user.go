@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/make-sdk"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -36,6 +35,7 @@ func tableUser(_ context.Context) *plugin.Table {
 			// Virtual columns for the query
 			{Name: "organization_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
 			{Name: "team_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
+			//, Transform: transform.From(utils.MockVirtualColumnValue)
 		},
 	}
 }
@@ -48,7 +48,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var op = makesdk.NewOrganizationListPaginator(c, -1)
+	var op = c.NewOrganizationListPaginator(-1)
 	for op.HasMorePages() {
 		organizations, err := op.NextPage()
 		if err != nil {
@@ -58,7 +58,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = makesdk.NewUserListPaginator(c, -1, team.Id)
+				var up = c.NewUserListPaginator(-1, team.Id)
 				for up.HasMorePages() {
 					users, err := up.NextPage()
 					if err != nil {
