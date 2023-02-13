@@ -1,5 +1,12 @@
 ## v0.2.0 [TBD]
 
+_What's new?_
+
+- Tables
+
+  - [make_scenario](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario.md)
+  - [make_scenario_log](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario_log.md)
+
 _Enhancements_
 
   - Added column `is_active` to table `make_api_token`.
