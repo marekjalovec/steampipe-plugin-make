@@ -35,7 +35,6 @@ func tableUser(_ context.Context) *plugin.Table {
 			// Virtual columns for the query
 			{Name: "organization_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
 			{Name: "team_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
-			//, Transform: transform.From(utils.MockVirtualColumnValue)
 		},
 	}
 }
