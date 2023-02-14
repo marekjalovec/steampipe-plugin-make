@@ -21,22 +21,22 @@ func tableScenarioDlq(_ context.Context) *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			// Key Columns
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "The Scenario Log ID."},
+			{Name: "id", Type: proto.ColumnType_STRING, Description: "The Incomplete Execution ID."},
 
 			// Other Columns
-			{Name: "reason", Type: proto.ColumnType_STRING, Description: "The Internal execution ID."},
-			{Name: "size", Type: proto.ColumnType_INT, Description: "The Internal execution ID."},
-			{Name: "index", Type: proto.ColumnType_INT, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "retry", Type: proto.ColumnType_BOOL, Description: "The Internal execution ID."},
-			{Name: "attempts", Type: proto.ColumnType_INT, Description: "The Internal execution ID."},
-			{Name: "created", Type: proto.ColumnType_TIMESTAMP, Description: "The Internal execution ID."},
-			{Name: "resolved", Type: proto.ColumnType_BOOL, Description: "The Internal execution ID."},
-			{Name: "deleted", Type: proto.ColumnType_BOOL, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "execution_id", Type: proto.ColumnType_STRING, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "scenario_id", Type: proto.ColumnType_INT, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "scenario_name", Type: proto.ColumnType_STRING, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
-			{Name: "team_name", Type: proto.ColumnType_STRING, Description: "The Internal execution ID.", Hydrate: getScenarioDlq},
+			{Name: "reason", Type: proto.ColumnType_STRING, Description: "Description of the problem."},
+			{Name: "size", Type: proto.ColumnType_INT, Description: "Data size of the bundle stored in the Incomplete Execution in bytes."},
+			{Name: "index", Type: proto.ColumnType_INT, Description: "Incomplete Execution index.", Hydrate: getScenarioDlq},
+			{Name: "retry", Type: proto.ColumnType_BOOL, Description: "Retry triggered?"},
+			{Name: "attempts", Type: proto.ColumnType_INT, Description: "Number of attempts."},
+			{Name: "created", Type: proto.ColumnType_TIMESTAMP, Description: "Date and time when this Incomplete Execution was created."},
+			{Name: "resolved", Type: proto.ColumnType_BOOL, Description: "Was the Incomplete Execution resolved?"},
+			{Name: "deleted", Type: proto.ColumnType_BOOL, Description: "Was the Incomplete Execution deleted?", Hydrate: getScenarioDlq},
+			{Name: "execution_id", Type: proto.ColumnType_STRING, Description: "The execution ID.", Hydrate: getScenarioDlq},
+			{Name: "scenario_id", Type: proto.ColumnType_INT, Description: "The Scenario ID.", Hydrate: getScenarioDlq},
+			{Name: "scenario_name", Type: proto.ColumnType_STRING, Description: "The Scenario name.", Hydrate: getScenarioDlq},
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: "The Team ID.", Hydrate: getScenarioDlq},
+			{Name: "team_name", Type: proto.ColumnType_STRING, Description: "The Team name.", Hydrate: getScenarioDlq},
 		},
 	}
 }
