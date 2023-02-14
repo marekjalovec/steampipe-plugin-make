@@ -5,6 +5,7 @@ _What's new?_
 - Tables
 
   - [make_scenario](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario.md)
+  - [make_scenario_dlq](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario_dlq.md)
   - [make_scenario_log](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario_log.md)
 
 _Enhancements_

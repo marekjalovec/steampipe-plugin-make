@@ -8,7 +8,14 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
+var lastConnection *plugin.Connection
+var makeClient *makesdk.Client
+
 func NewMakeClient(c *plugin.Connection) (*makesdk.Client, error) {
+	if lastConnection == c && makeClient != nil {
+		return makeClient, nil
+	}
+
 	var cfg, ok = c.Config.(Config)
 	if !ok {
 		return nil, fmt.Errorf("config object is not valid")
@@ -19,7 +26,10 @@ func NewMakeClient(c *plugin.Connection) (*makesdk.Client, error) {
 		return nil, err
 	}
 
-	return makesdk.GetClient(config), nil
+	lastConnection = c
+	makeClient = makesdk.GetClient(config)
+
+	return makeClient, nil
 }
 
 func ToJSON(value interface{}) string {
