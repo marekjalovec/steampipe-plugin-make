@@ -1,8 +1,10 @@
 # Table: make_scenario
 
-Scenarios allow you to create and run automation tasks. A scenario consists of a series of modules that indicate how data should be transferred and transformed between apps or services.
+Scenarios allow you to create and run automation tasks. A scenario consists of a series of modules that indicate how
+data should be transferred and transformed between apps or services.
 
 ### Key columns
+
 - Provide a numeric `id` if you want to query for a specific Scenario.
 
 ## Examples

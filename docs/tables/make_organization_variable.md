@@ -3,7 +3,9 @@
 Organization Variables are user-set variables you can use in your scenarios.
 
 ### Key columns
-- Provide a numeric `organization_id` to query Organization Variables for a specific Organization. This can be either set directly in a where clause, or specified as part of join with another table.
+
+- Provide a numeric `organization_id` to query Organization Variables for a specific Organization. This can be either
+  set directly in a where clause, or specified as part of join with another table.
 
 ## Examples
 

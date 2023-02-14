@@ -1,13 +1,18 @@
 # Table: make_connection
 
-For most apps included in Make, it is necessary to create a connection, through which Make will communicate with the given third-party service according to the settings of a specific scenario.
+For most apps included in Make, it is necessary to create a connection, through which Make will communicate with the
+given third-party service according to the settings of a specific scenario.
 
 ### Key columns
+
 - Provide a numeric `id` if you want to query for a specific Team.
-- Provide a numeric `team_id` to query Connections for a specific Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
+- Provide a numeric `team_id` to query Connections for a specific Team. This can be either set directly in a `where`
+  clause, or specified as part of `join` with another table.
 
 ### Caveat
-- Be careful when requesting all columns (`*`) or the `scopes` column without using an `id` in the query. To load this detail Steampipe will have to make one extra API request per Connection returned. 
+
+- Be careful when requesting all columns (`*`) or the `scopes` column without using an `id` in the query. To load this
+  data, Steampipe will have to make one extra API request per Connection returned.
 
 ## Examples
 
