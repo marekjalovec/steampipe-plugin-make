@@ -2,7 +2,6 @@ package make
 
 import (
 	"context"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -20,10 +19,10 @@ func tableUserRole(_ context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The user ID."},
 
 			// Other Columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Full name of the Role."},
-			{Name: "subsidiary", Type: proto.ColumnType_BOOL, Description: "Is this Role defined in an Organization, or is it part of the account?"},
-			{Name: "category", Type: proto.ColumnType_STRING, Description: "Can this role be used on the Organization, or Team level?"},
-			{Name: "permissions", Type: proto.ColumnType_JSON, Description: "Permissions of the users in this Role."},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Role."},
+			{Name: "subsidiary", Type: proto.ColumnType_BOOL, Description: "Is the Role defined in an Organization, or is it part of the account?"},
+			{Name: "category", Type: proto.ColumnType_STRING, Description: "Can the Role be used on the Organization, or Team level?"},
+			{Name: "permissions", Type: proto.ColumnType_JSON, Description: "Permissions of the users in the Role."},
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
@@ -34,40 +33,25 @@ func tableUserRole(_ context.Context) *plugin.Table {
 func listUserRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listUserRoles", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// prepare params
-	var config = client.NewRequestConfig("users/roles")
-	ColumnsToParams(&config.Params, []string{"id", "name", "subsidiary", "category", "permissions"})
-	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = int(*d.QueryContext.Limit)
-	}
-
-	// fetch data
-	var pagesLeft = true
-	for pagesLeft {
-		var result = &client.UserRoleListResponse{}
-		err = c.Get(&config, result)
+	var up = c.NewUserRoleListPaginator(int(d.RowsRemaining(ctx)))
+	for up.HasMorePages() {
+		userRoles, err := up.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_user_role.listUserRoles", "request_error", err)
-			return nil, c.HandleKnownErrors(err, "user:read")
+			return nil, err
 		}
 
-		// stream results
-		for _, i := range result.UserRoles {
+		for _, i := range userRoles {
 			d.StreamListItem(ctx, i)
-		}
 
-		// pagination
-		var resultCount = len(result.UserRoles)
-		if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
-			pagesLeft = false
-		} else {
-			config.Pagination.Offset += config.Pagination.Limit
+			if d.RowsRemaining(ctx) <= 0 {
+				return nil, nil
+			}
 		}
 	}
 

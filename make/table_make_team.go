@@ -2,12 +2,9 @@ package make
 
 import (
 	"context"
-	"fmt"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"strconv"
 )
 
 func tableTeam(_ context.Context) *plugin.Table {
@@ -15,8 +12,7 @@ func tableTeam(_ context.Context) *plugin.Table {
 		Name:        "make_team",
 		Description: "Teams are containers that contain scenarios and data accessible only by the members of the team.",
 		List: &plugin.ListConfig{
-			Hydrate:       listTeams,
-			ParentHydrate: listOrganizations,
+			Hydrate: listTeams,
 		},
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("id"),
@@ -31,77 +27,61 @@ func tableTeam(_ context.Context) *plugin.Table {
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Team."},
 
 			// Standard Columns
-			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")}},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+		},
 	}
 }
 
 func getTeam(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("getTeam", ctx, d, h)
 
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// prepare params
-	var id = int(d.EqualsQuals["id"].GetInt64Value())
-	var config = client.NewRequestConfig(fmt.Sprintf(`teams/%d`, id))
-	ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
-
-	// fetch data
-	var result = &client.TeamResponse{}
-	err = c.Get(&config, &result)
+	team, err := c.GetTeam(int(d.EqualsQuals["id"].GetInt64Value()))
 	if err != nil {
 		plugin.Logger(ctx).Error("make_team.getTeam", "request_error", err)
-		return nil, c.HandleKnownErrors(err, "teams:read")
+		return nil, err
 	}
 
-	return result.Team, nil
+	return team, nil
 }
 
 func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listTeams", ctx, d, h)
 
-	if h.Item == nil {
-		return nil, fmt.Errorf("no parent item found")
-	}
-
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// prepare params
-	var config = client.NewRequestConfig("teams")
-	ColumnsToParams(&config.Params, []string{"id", "name", "organizationId"})
-	config.Params.Set("organizationId", strconv.Itoa(h.Item.(client.Organization).Id))
-	if d.QueryContext.Limit != nil {
-		config.Pagination.Limit = int(*d.QueryContext.Limit)
-	}
-
-	// fetch data
-	var pagesLeft = true
-	for pagesLeft {
-		var result = &client.TeamListResponse{}
-		err = c.Get(&config, result)
+	var op = c.NewOrganizationListPaginator(-1)
+	for op.HasMorePages() {
+		organizations, err := op.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_team.listTeams", "request_error", err)
-			return nil, c.HandleKnownErrors(err, "teams:read")
+			return nil, err
 		}
 
-		// stream results
-		for _, i := range result.Teams {
-			d.StreamListItem(ctx, i)
-		}
+		for _, organization := range organizations {
+			var up = c.NewTeamListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
+			for up.HasMorePages() {
+				teams, err := up.NextPage()
+				if err != nil {
+					plugin.Logger(ctx).Error("make_team.listTeams", "request_error", err)
+					return nil, err
+				}
 
-		// pagination
-		var resultCount = len(result.Teams)
-		if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
-			pagesLeft = false
-		} else {
-			config.Pagination.Offset += config.Pagination.Limit
+				for _, i := range teams {
+					d.StreamListItem(ctx, i)
+
+					if d.RowsRemaining(ctx) <= 0 {
+						return nil, nil
+					}
+				}
+			}
 		}
 	}
 

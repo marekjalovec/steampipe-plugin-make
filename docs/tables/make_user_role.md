@@ -1,8 +1,10 @@
 # Table: make_user_role
 
-User roles usable for users within your Organizations and Teams. The column `category` signifies where the role can be used.
+User roles usable for users within your Organizations and Teams. The column `category` signifies where the role can be
+used.
 
 ### Key columns
+
 - Provide a numeric `id` if you want to query for a specific User Role.
 
 ## Examples
@@ -35,5 +37,5 @@ from
       make_organization o
       on o.id = uor.organization_id
 where
-   uor.users_role_id = 12;
+   uor.users_role_id = 1;
 ```

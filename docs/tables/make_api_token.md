@@ -15,3 +15,15 @@ select
 from
   make_api_token;
 ```
+
+### Find out which API Token is being used without opening `make.spc`
+
+```sql
+select
+  token,
+  label
+from
+  make_api_token
+where
+  is_active = true;
+```

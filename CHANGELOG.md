@@ -1,3 +1,22 @@
+## v0.2.0 [2023-02-14]
+
+_What's new?_
+
+- Tables
+
+  - [make_scenario](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario.md)
+  - [make_scenario_dlq](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario_dlq.md)
+  - [make_scenario_log](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_scenario_log.md)
+
+_Enhancements_
+
+  - Added column `is_active` to table `make_api_token`.
+  - Added column `sso_pending` to table `make_user_organization_role`.
+
+_Bug fixes_
+
+  - Column `make_data_store`.`datastructure_id` was not correctly loaded without using `id` in the condition. 
+
 ## v0.1.0 [2023-01-19]
 
 _What's new?_

@@ -2,8 +2,6 @@ package make
 
 import (
 	"context"
-	"fmt"
-	"github.com/marekjalovec/steampipe-plugin-make/client"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -14,13 +12,12 @@ func tableTeamVariable(_ context.Context) *plugin.Table {
 		Name:        "make_team_variable",
 		Description: "Team Variables are user-set variables you can use in your scenarios.",
 		List: &plugin.ListConfig{
-			Hydrate:       listTeamVariables,
-			ParentHydrate: listOrganizations,
+			Hydrate: listTeamVariables,
 		},
 		Columns: []*plugin.Column{
 			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Team Variable."},
-			{Name: "type_id", Type: proto.ColumnType_INT, Description: "Original data type of the Team Variable. Here, all are represented as strings in the `value` column."},
+			{Name: "type_id", Type: proto.ColumnType_INT, Description: "Original data type of the Team Variable."},
 			{Name: "value", Type: proto.ColumnType_STRING, Description: "The value of the Team Variable, converted to string."},
 			{Name: "is_system", Type: proto.ColumnType_BOOL, Description: "Is the Team Variable set by Make, or by users?"},
 
@@ -36,48 +33,38 @@ func tableTeamVariable(_ context.Context) *plugin.Table {
 func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	LogQueryContext("listTeamVariables", ctx, d, h)
 
-	if h.Item == nil {
-		return nil, fmt.Errorf("no parent item found")
-	}
-
-	// create new Make client
-	c, err := client.GetClient(ctx, d.Connection)
+	c, err := NewMakeClient(d.Connection)
 	if err != nil {
 		return nil, err
 	}
 
-	// iterate over organization teams
-	var organization = h.Item.(client.Organization)
-	var teams = organization.Teams
-	for _, team := range teams {
-		// prepare params
-		var config = client.NewRequestConfig(fmt.Sprintf(`teams/%d/variables`, team.Id))
-		if d.QueryContext.Limit != nil {
-			config.Pagination.Limit = int(*d.QueryContext.Limit)
+	var op = c.NewOrganizationListPaginator(-1)
+	for op.HasMorePages() {
+		organizations, err := op.NextPage()
+		if err != nil {
+			plugin.Logger(ctx).Error("make_team_variable.listTeamVariables", "request_error", err)
+			return nil, err
 		}
 
-		// fetch data
-		var pagesLeft = true
-		for pagesLeft {
-			var result = &client.TeamVariableListResponse{}
-			err = c.Get(&config, result)
-			if err != nil {
-				plugin.Logger(ctx).Error("make_team_variable.listTeamVariables", "request_error", err)
-				return nil, c.HandleKnownErrors(err, "team-variables:read")
-			}
+		for _, organization := range organizations {
+			for _, team := range organization.Teams {
+				var up = c.NewTeamVariableListPaginator(int(d.RowsRemaining(ctx)), team.Id)
+				for up.HasMorePages() {
+					teamVariables, err := up.NextPage()
+					if err != nil {
+						plugin.Logger(ctx).Error("make_team_variable.listTeamVariables", "request_error", err)
+						return nil, err
+					}
 
-			// stream results
-			for _, i := range result.TeamVariables {
-				i.TeamId = team.Id
-				d.StreamListItem(ctx, i)
-			}
+					for _, i := range teamVariables {
+						i.TeamId = team.Id
+						d.StreamListItem(ctx, i)
 
-			// pagination
-			var resultCount = len(result.TeamVariables)
-			if d.RowsRemaining(ctx) <= 0 || resultCount < config.Pagination.Limit {
-				pagesLeft = false
-			} else {
-				config.Pagination.Offset += config.Pagination.Limit
+						if d.RowsRemaining(ctx) <= 0 {
+							return nil, nil
+						}
+					}
+				}
 			}
 		}
 	}

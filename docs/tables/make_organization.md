@@ -16,7 +16,7 @@ select
 from
   make_organization
 order by
-  name
+  name;
 ```
 
 ### Detail of an Organization
