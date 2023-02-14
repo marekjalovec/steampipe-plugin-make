@@ -3,7 +3,9 @@
 Team Variables are user-set variables you can use in your scenarios.
 
 ### Key columns
-- Provide a numeric `team_id` to query Team Variables for a specific Team. This can be either set directly in a where clause, or specified as part of join with another table.
+
+- Provide a numeric `team_id` to query Team Variables for a specific Team. This can be either set directly in a where
+  clause, or specified as part of join with another table.
 
 ## Examples
 
