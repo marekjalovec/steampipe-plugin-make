@@ -1,3 +1,16 @@
+## v0.3.0 [2023-03-23]
+
+_What's new?_
+
+- Tables
+
+  - [make_function](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_function.md)
+
+_Breaking changes_
+
+- `make_organization`.`licence` updated to match current documentation.
+- `make_data_store`.`datastructure_id` renamed to `data_structure_id`.
+
 ## v0.2.1 [2023-03-22]
 
 _Bug fixes_
