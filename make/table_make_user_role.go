@@ -38,9 +38,9 @@ func listUserRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var up = c.NewUserRoleListPaginator(int(d.RowsRemaining(ctx)))
-	for up.HasMorePages() {
-		userRoles, err := up.NextPage()
+	urlp := c.NewUserRoleListPaginator(int(d.RowsRemaining(ctx)))
+	for urlp.HasMorePages() {
+		userRoles, err := urlp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_user_role.listUserRoles", "request_error", err)
 			return nil, err

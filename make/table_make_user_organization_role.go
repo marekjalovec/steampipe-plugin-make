@@ -40,10 +40,10 @@ func listUserOrganizationRoles(ctx context.Context, d *plugin.QueryData, h *plug
 	}
 
 	// prepare params
-	var userId = int(d.EqualsQuals["user_id"].GetInt64Value())
-	var uorp = c.NewUserOrganizationRoleListPaginator(int(d.RowsRemaining(ctx)), userId)
-	for uorp.HasMorePages() {
-		organizationRoles, err := uorp.NextPage()
+	userId := int(d.EqualsQuals["user_id"].GetInt64Value())
+	uorlp := c.NewUserOrganizationRoleListPaginator(int(d.RowsRemaining(ctx)), userId)
+	for uorlp.HasMorePages() {
+		organizationRoles, err := uorlp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_user_organization_role.listUserOrganizationRoles", "request_error", err)
 			return nil, err

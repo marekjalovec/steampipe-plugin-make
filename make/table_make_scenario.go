@@ -80,9 +80,9 @@ func listScenarios(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_scenario.listScenarios", "request_error", err)
 			return nil, err
@@ -90,9 +90,9 @@ func listScenarios(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = c.NewScenarioListPaginator(int(d.RowsRemaining(ctx)), team.Id, 0)
-				for up.HasMorePages() {
-					scenarios, err := up.NextPage()
+				slp := c.NewScenarioListPaginator(int(d.RowsRemaining(ctx)), team.Id, 0)
+				for slp.HasMorePages() {
+					scenarios, err := slp.NextPage()
 					if err != nil {
 						plugin.Logger(ctx).Error("make_scenario.listScenarios", "request_error", err)
 						return nil, err

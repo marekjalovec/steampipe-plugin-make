@@ -63,9 +63,9 @@ func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(int(d.RowsRemaining(ctx)))
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(int(d.RowsRemaining(ctx)))
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_organization.listOrganizations", "request_error", err)
 			return nil, err

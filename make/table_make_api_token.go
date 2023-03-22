@@ -36,9 +36,9 @@ func listApiTokens(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 		return nil, err
 	}
 
-	var op = c.NewApiTokenListPaginator(int(d.RowsRemaining(ctx)))
-	for op.HasMorePages() {
-		tokens, err := op.NextPage()
+	tlp := c.NewApiTokenListPaginator(int(d.RowsRemaining(ctx)))
+	for tlp.HasMorePages() {
+		tokens, err := tlp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_api_token.listApiTokens", "request_error", err)
 			return nil, err

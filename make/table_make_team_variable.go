@@ -38,9 +38,9 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_team_variable.listTeamVariables", "request_error", err)
 			return nil, err
@@ -48,9 +48,9 @@ func listTeamVariables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = c.NewTeamVariableListPaginator(int(d.RowsRemaining(ctx)), team.Id)
-				for up.HasMorePages() {
-					teamVariables, err := up.NextPage()
+				tvlp := c.NewTeamVariableListPaginator(int(d.RowsRemaining(ctx)), team.Id)
+				for tvlp.HasMorePages() {
+					teamVariables, err := tvlp.NextPage()
 					if err != nil {
 						plugin.Logger(ctx).Error("make_team_variable.listTeamVariables", "request_error", err)
 						return nil, err

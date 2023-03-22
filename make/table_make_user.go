@@ -47,9 +47,9 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_user.listUsers", "request_error", err)
 			return nil, err
@@ -57,9 +57,9 @@ func listUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = c.NewUserListPaginator(-1, team.Id)
-				for up.HasMorePages() {
-					users, err := up.NextPage()
+				ulp := c.NewUserListPaginator(-1, team.Id)
+				for ulp.HasMorePages() {
+					users, err := ulp.NextPage()
 					if err != nil {
 						plugin.Logger(ctx).Error("make_user.listUsers", "request_error", err)
 						return nil, err

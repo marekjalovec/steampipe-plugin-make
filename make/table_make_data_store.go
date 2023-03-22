@@ -22,7 +22,6 @@ func tableDataStore(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Key Columns
 			{Name: "id", Type: proto.ColumnType_INT, Description: "The Data Store ID."},
-			{Name: "team_id", Type: proto.ColumnType_INT, Description: "ID of the Team that owns the Data Store."},
 
 			// Other Columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "The name of the Data Store."},
@@ -33,6 +32,9 @@ func tableDataStore(_ context.Context) *plugin.Table {
 
 			// Standard Columns
 			{Name: "title", Type: proto.ColumnType_STRING, Description: StandardColumnDescription("title"), Transform: transform.FromField("Name")},
+
+			// Virtual columns for the query
+			{Name: "team_id", Type: proto.ColumnType_INT, Description: StandardColumnDescription("virtual")},
 		},
 	}
 }
@@ -51,13 +53,13 @@ func getDataStore(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	} else {
 		id = int(d.EqualsQuals["id"].GetInt64Value())
 	}
-	team, err := c.GetDataStore(id)
+	dataStore, err := c.GetDataStore(id)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_data_store.getDataStore", "request_error", err)
 		return nil, err
 	}
 
-	return team, nil
+	return dataStore, nil
 }
 
 func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -68,9 +70,9 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
 			return nil, err
@@ -78,9 +80,9 @@ func listDataStores(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var up = c.NewDataStoreListPaginator(int(d.RowsRemaining(ctx)), team.Id)
-				for up.HasMorePages() {
-					dataStores, err := up.NextPage()
+				dslp := c.NewDataStoreListPaginator(int(d.RowsRemaining(ctx)), team.Id)
+				for dslp.HasMorePages() {
+					dataStores, err := dslp.NextPage()
 					if err != nil {
 						plugin.Logger(ctx).Error("make_data_store.listDataStores", "request_error", err)
 						return nil, err
