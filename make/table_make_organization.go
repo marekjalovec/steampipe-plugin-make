@@ -46,13 +46,13 @@ func getOrganization(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		return nil, err
 	}
 
-	team, err := c.GetTeam(int(d.EqualsQuals["id"].GetInt64Value()))
+	organization, err := c.GetOrganization(int(d.EqualsQuals["id"].GetInt64Value()))
 	if err != nil {
 		plugin.Logger(ctx).Error("make_organization.getOrganization", "request_error", err)
 		return nil, err
 	}
 
-	return team, nil
+	return organization, nil
 }
 
 func listOrganizations(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
