@@ -38,18 +38,18 @@ func listOrganizationVariables(ctx context.Context, d *plugin.QueryData, h *plug
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_organization_variable.listOrganizationVariables", "request_error", err)
 			return nil, err
 		}
 
 		for _, organization := range organizations {
-			var up = c.NewOrganizationVariableListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
-			for up.HasMorePages() {
-				organizationVariables, err := up.NextPage()
+			ovlp := c.NewOrganizationVariableListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
+			for ovlp.HasMorePages() {
+				organizationVariables, err := ovlp.NextPage()
 				if err != nil {
 					plugin.Logger(ctx).Error("make_organization_variable.listOrganizationVariables", "request_error", err)
 					return nil, err

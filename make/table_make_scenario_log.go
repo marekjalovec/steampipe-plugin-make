@@ -73,9 +73,9 @@ func listScenarioLogs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	}
 
 	scenarioId := int(d.EqualsQuals["scenario_id"].GetInt64Value())
-	up := c.NewScenarioLogListPaginator(int(d.RowsRemaining(ctx)), scenarioId)
-	for up.HasMorePages() {
-		scenarioLogs, err := up.NextPage()
+	sllp := c.NewScenarioLogListPaginator(int(d.RowsRemaining(ctx)), scenarioId)
+	for sllp.HasMorePages() {
+		scenarioLogs, err := sllp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_scenario_log.listScenarioLogs", "request_error", err)
 			return nil, err

@@ -39,10 +39,10 @@ func listUserTeamRoles(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	}
 
 	// prepare params
-	var userId = int(d.EqualsQuals["user_id"].GetInt64Value())
-	var utrp = c.NewUserTeamRoleListPaginator(int(d.RowsRemaining(ctx)), userId)
-	for utrp.HasMorePages() {
-		teamRoles, err := utrp.NextPage()
+	userId := int(d.EqualsQuals["user_id"].GetInt64Value())
+	utrlp := c.NewUserTeamRoleListPaginator(int(d.RowsRemaining(ctx)), userId)
+	for utrlp.HasMorePages() {
+		teamRoles, err := utrlp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_user_team_role.listUserTeamRoles", "request_error", err)
 			return nil, err

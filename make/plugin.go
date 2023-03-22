@@ -46,6 +46,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"make_api_token":              tableApiToken(ctx),
 			"make_connection":             tableConnection(ctx),
 			"make_data_store":             tableDataStore(ctx),
+			"make_function":               tableFunctions(ctx),
 			"make_organization":           tableOrganization(ctx),
 			"make_organization_variable":  tableOrganizationVariable(ctx),
 			"make_scenario":               tableScenario(ctx),

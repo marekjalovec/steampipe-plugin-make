@@ -58,13 +58,13 @@ func getConnection(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	} else {
 		id = int(d.EqualsQuals["id"].GetInt64Value())
 	}
-	team, err := c.GetConnection(id)
+	connection, err := c.GetConnection(id)
 	if err != nil {
 		plugin.Logger(ctx).Error("make_connection.getConnection", "request_error", err)
 		return nil, err
 	}
 
-	return team, nil
+	return connection, nil
 }
 
 func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
@@ -75,9 +75,9 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_connection.listConnections", "request_error", err)
 			return nil, err
@@ -85,9 +85,9 @@ func listConnections(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 		for _, organization := range organizations {
 			for _, team := range organization.Teams {
-				var cp = c.NewConnectionListPaginator(int(d.RowsRemaining(ctx)), team.Id)
-				for cp.HasMorePages() {
-					connections, err := cp.NextPage()
+				clp := c.NewConnectionListPaginator(int(d.RowsRemaining(ctx)), team.Id)
+				for clp.HasMorePages() {
+					connections, err := clp.NextPage()
 					if err != nil {
 						plugin.Logger(ctx).Error("make_connection.listConnections", "request_error", err)
 						return nil, err

@@ -3,7 +3,7 @@ module github.com/marekjalovec/steampipe-plugin-make
 go 1.19
 
 require (
-	github.com/marekjalovec/make-sdk v0.2.0
+	github.com/marekjalovec/make-sdk v0.3.0
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.1.0
 )
 

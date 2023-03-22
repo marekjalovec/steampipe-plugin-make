@@ -57,18 +57,18 @@ func listTeams(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 
-	var op = c.NewOrganizationListPaginator(-1)
-	for op.HasMorePages() {
-		organizations, err := op.NextPage()
+	olp := c.NewOrganizationListPaginator(-1)
+	for olp.HasMorePages() {
+		organizations, err := olp.NextPage()
 		if err != nil {
 			plugin.Logger(ctx).Error("make_team.listTeams", "request_error", err)
 			return nil, err
 		}
 
 		for _, organization := range organizations {
-			var up = c.NewTeamListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
-			for up.HasMorePages() {
-				teams, err := up.NextPage()
+			tlp := c.NewTeamListPaginator(int(d.RowsRemaining(ctx)), organization.Id)
+			for tlp.HasMorePages() {
+				teams, err := tlp.NextPage()
 				if err != nil {
 					plugin.Logger(ctx).Error("make_team.listTeams", "request_error", err)
 					return nil, err
