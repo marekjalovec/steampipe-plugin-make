@@ -7,7 +7,7 @@ Data Stores are used to store data from scenarios or for transferring data in be
 - Provide a numeric `team_id` to query Data Stores for a specific Team. This can be either set directly in a `where` clause, or specified as part of `join` with another table.
 
 ### Caveat
-- Be careful when requesting all columns (`*`) or the `datastructure_id` column without using an `id` in the query. To load this data, Steampipe will have to make one extra API request per Data Store returned.
+- Be careful when requesting all columns (`*`) or the `data_structure_id` column without using an `id` in the query. To load this data, Steampipe will have to make one extra API request per Data Store returned.
 
 ## Examples
 
@@ -88,7 +88,7 @@ select
   records,
   size,
   max_size,
-  datastructure_id
+  data_structure_id
 from
   make_data_store
 where
