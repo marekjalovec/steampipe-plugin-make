@@ -1,3 +1,15 @@
+## v0.4.0 [2023-04-19]
+
+_What's new?_
+
+- Tables
+
+  - [make_hook](https://github.com/marekjalovec/steampipe-plugin-make/blob/master/docs/tables/make_hook.md)
+
+_Breaking changes_
+
+- `make_scenario`.`is_linked` renamed to `is_enabled` (following SDK changes).
+
 ## v0.3.1 [2023-04-19]
 
 _Dependencies_
