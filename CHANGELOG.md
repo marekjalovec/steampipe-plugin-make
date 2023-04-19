@@ -1,3 +1,10 @@
+## v0.3.1 [2023-04-19]
+
+_Dependencies_
+
+  - Recompiled plugin with steampipe-plugin-sdk v5.3.0
+  - Dependencies updated to latest versions
+
 ## v0.3.0 [2023-03-22]
 
 _What's new?_
