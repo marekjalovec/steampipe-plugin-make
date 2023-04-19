@@ -2,6 +2,7 @@ package make
 
 import (
 	"context"
+
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -30,7 +31,7 @@ func tableScenario(_ context.Context) *plugin.Table {
 			{Name: "description", Type: proto.ColumnType_STRING, Description: "The Scenario description."},
 			{Name: "folder_id", Type: proto.ColumnType_INT, Description: "The folder id, if Scenario is in a folder."},
 			{Name: "is_invalid", Type: proto.ColumnType_BOOL, Description: "Is the Scenario invalid?"},
-			{Name: "is_linked", Type: proto.ColumnType_BOOL, Description: "Is the Scenario linked?"},
+			{Name: "is_enabled", Type: proto.ColumnType_BOOL, Description: "Is the Scenario enabled?"},
 			{Name: "is_locked", Type: proto.ColumnType_BOOL, Description: "Is the Scenario locked?"},
 			{Name: "is_paused", Type: proto.ColumnType_BOOL, Description: "Is the Scenario paused?"},
 			{Name: "concept", Type: proto.ColumnType_BOOL, Description: "Is the Scenario a concept?"},
