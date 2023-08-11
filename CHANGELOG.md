@@ -1,3 +1,9 @@
+## v0.4.1 [2023-08-11]
+
+_What's new?_
+
+- Dependencies updated to latest versions
+
 ## v0.4.0 [2023-04-19]
 
 _What's new?_
