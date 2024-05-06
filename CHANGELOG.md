@@ -1,3 +1,10 @@
+## v0.4.4 [2024-05-06]
+
+_What's new?_
+
+- Dependencies updated to latest versions
+- Rebuilt with steampipe-plugin-sdk v5.10
+
 ## v0.4.3 [2024-01-02]
 
 _What's new?_
