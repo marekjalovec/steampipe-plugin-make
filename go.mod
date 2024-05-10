@@ -6,7 +6,7 @@ toolchain go1.22.2
 
 require (
 	github.com/marekjalovec/make-sdk v0.5.1
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.0
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.10.1
 )
 
 require (
@@ -63,7 +63,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
